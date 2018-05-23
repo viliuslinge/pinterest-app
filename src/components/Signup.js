@@ -69,10 +69,12 @@ class Signup extends Component {
     return this.setError('password', 'valid')
   }
 
-  handleSignup = event => {
+  handleSignup = async event => {
     event.preventDefault();
-    firebaseService.emailSignUp(this.state.email.value, this.state.password.value)
-      .then(() => this.props.history.push('/home'));
+    await new Promise((res) => setTimeout(res, 1000))
+    console.log('yo')
+    // firebaseService.emailSignUp(this.state.email.value, this.state.password.value)
+    //   .then(() => this.props.history.push('/home'));
   }
 
   handleChange = event => {
@@ -132,7 +134,7 @@ class Signup extends Component {
             this.state.password.error && <p>{this.state.password.error}</p>
           }
             
-          <button type="submit" disabled={!isValid}>Signup</button>
+          <button type="submit" disabled={false}>Signup</button>
         </form>
       </div>
     )
