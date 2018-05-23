@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FirebaseService } from '../api/auth';
 import { auth } from '../firebase';
+import { Redirect } from 'react-router-dom'
 
 const firebaseService = new FirebaseService();
 
@@ -88,7 +89,7 @@ class Signup extends Component {
   componentDidMount() {
     auth.onAuthStateChanged(data => {
       if (data) {
-        this.setState({ user: data }, () => this.props.history.push('/home'));
+        this.setState({ user: data });
       } else {
         this.setState({ user: null });
       }
@@ -101,6 +102,10 @@ class Signup extends Component {
       this.state.password.value &&
       !this.state.password.error &&
       !this.state.email.error;
+
+    if (this.state.user) {
+      return <Redirect to="/home" />
+    }
 
     return (
       <div className="App">
