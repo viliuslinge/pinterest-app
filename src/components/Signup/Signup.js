@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { FirebaseService } from '../../api/auth';
-import { auth } from '../../firebase';
 
 import { Input } from 'antd';
 import { Button } from 'antd';
@@ -18,8 +17,7 @@ class Signup extends Component {
     password: {
       value: '',
       error: ''
-    },
-    user:  null
+    }
   }
 
   validationMessage = {
@@ -75,6 +73,7 @@ class Signup extends Component {
   handleSignup = event => {
     event.preventDefault();
     firebaseService.emailSignUp(this.state.email.value, this.state.password.value)
+      .then(() => this.props.history.push('/home'));
   }
 
   handleChange = event => {
@@ -89,13 +88,7 @@ class Signup extends Component {
   }
 
   componentDidMount() {
-    auth.onAuthStateChanged(data => {
-      if (data) {
-        this.setState({ user: data }, () => this.props.history.push('/home'));
-      } else {
-        this.setState({ user: null });
-      }
-    })
+    this.props.user && this.props.history.push('/home');
   }
 
   render() {
