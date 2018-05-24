@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import './Navbar.css';
+import styles from './Navbar.scss';
 import Logo from '../../assets/logo.svg'
 
 class Navbar extends Component {
   render() {
     return (
-      <div className="navbar">
+      <div className={styles.navbar}>
         <img
-          className="navbar__logo"
+          className={styles.navbar__logo}
           src={Logo}
           alt="Clapp"
           onClick={() => this.props.history.push('/')} />

@@ -4,7 +4,7 @@ import { auth } from '../../firebase';
 
 import { Input } from 'antd';
 import { Button } from 'antd';
-import 'antd/dist/antd.css';
+// import styles from './Signup.css';
 
 const firebaseService = new FirebaseService();
 
@@ -106,7 +106,7 @@ class Signup extends Component {
       !this.state.email.error;
 
     return (
-      <div className="App">
+      <div>
         <form
           onSubmit={this.handleSignup}
           noValidate>
