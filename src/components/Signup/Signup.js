@@ -4,7 +4,7 @@ import { auth } from '../../firebase';
 
 import { Input } from 'antd';
 import { Button } from 'antd';
-// import styles from './Signup.css';
+import styles from './Signup.scss';
 
 const firebaseService = new FirebaseService();
 
@@ -106,33 +106,44 @@ class Signup extends Component {
       !this.state.email.error;
 
     return (
-      <div>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Sign up</h1>
+
         <form
+          className={styles.form}
           onSubmit={this.handleSignup}
           noValidate>
-          <Input
-            size="large"
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={this.state.email.value}
-            onChange={this.handleChange}/>
-          { 
-            this.state.email.error && <p>{this.state.email.error}</p>
-          }
-
-          <Input
-            size="large"
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={this.state.password.value}
-            onChange={this.handleChange}/>
-          { 
-            this.state.password.error && <p>{this.state.password.error}</p>
-          }
-            
+          
+          <div className={styles.inputBox}>
+            <Input
+              size="large"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={this.state.email.value}
+              onChange={this.handleChange}/>
+            { 
+              this.state.email.error &&
+              <p className={styles.validation}>{this.state.email.error}</p>
+            }
+          </div>
+          
+          <div className={styles.inputBox}>
+            <Input
+              size="large"
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={this.state.password.value}
+              onChange={this.handleChange}/>
+            { 
+              this.state.password.error &&
+              <p className={styles.validation}>{this.state.password.error}</p>
+            }
+          </div>
+          
           <Button
+            className={styles.button}
             type="primary"
             size="large"
             htmlType="submit"
@@ -140,6 +151,11 @@ class Signup extends Component {
             Signup
           </Button>
         </form>
+
+        <div className={styles.footer}>
+          <p>Already a member?</p>
+          <a onClick={() => this.props.history.push('/login')}>Log in</a>
+        </div>
       </div>
     )
   }

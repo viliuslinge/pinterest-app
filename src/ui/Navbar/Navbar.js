@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './Navbar.scss';
 import Logo from '../../assets/logo.svg'
+import { Button } from 'antd';
 
 class Navbar extends Component {
   render() {
@@ -12,8 +13,8 @@ class Navbar extends Component {
           alt="Clapp"
           onClick={() => this.props.history.push('/')} />
         <div>
-          <button onClick={() => this.props.history.push('/signup')}>Signup</button>
-          <button onClick={() => this.props.history.push('/login')}>Login</button>
+          <Button onClick={() => this.props.history.push('/signup')}>Signup</Button>
+          <Button onClick={() => this.props.history.push('/login')}>Login</Button>
         </div>
       </div>
     )

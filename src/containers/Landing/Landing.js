@@ -1,11 +1,25 @@
 import React, { Component } from 'react';
+import styles from './Landing.scss';
+import { Button } from 'antd';
 
 class Landing extends Component {
   render() {
     return (
-      <div className="">
-        <button onClick={() => this.props.history.push('/signup')}>Signup</button>
-        <button onClick={() => this.props.history.push('/login')}>Login</button>
+      <div className={styles.container}>
+        <h1>Landing page</h1>
+        
+        <div className={styles.buttons}>
+          <Button
+            size="large"
+            onClick={() => this.props.history.push('/signup')}>
+            Signup
+          </Button>
+          <Button
+            size="large"
+            onClick={() => this.props.history.push('/login')}>
+            Login
+          </Button>
+        </div>
       </div>
     );
   }

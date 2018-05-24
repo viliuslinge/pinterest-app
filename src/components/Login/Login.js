@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { FirebaseService } from '../../api/auth';
 import { auth } from '../../firebase';
 
+import { Input } from 'antd';
+import { Button } from 'antd';
+import styles from './Login.scss';
+
 const firebaseService = new FirebaseService();
 
 class Login extends Component {
@@ -92,32 +96,56 @@ class Login extends Component {
       !this.state.email.error;
 
     return (
-      <div className="App">
+      <div className={styles.container}>
+        <h1 className={styles.title}>Log in</h1>
+
         <form
+          className={styles.form}
           onSubmit={this.handleLogin}
           noValidate>
-          <input
+
+          <div className={styles.inputBox}>
+          <Input
+            size="large"
             type="email"
             name="email"
             placeholder="Email"
             value={this.state.email.value}
             onChange={this.handleChange}/>
           { 
-            this.state.email.error && <p>{this.state.email.error}</p>
+            this.state.email.error &&
+            <p className={styles.validation}>{this.state.email.error}</p>
           }
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={this.state.password.value}
-            onChange={this.handleChange}/>
-          { 
-            this.state.password.error && <p>{this.state.password.error}</p>
-          }
-            
-          <button type="submit" disabled={!isValid}>Login</button>
+          </div>
+          
+          <div className={styles.inputBox}>
+            <Input
+              size="large"
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={this.state.password.value}
+              onChange={this.handleChange}/>
+            { 
+              this.state.password.error &&
+              <p className={styles.validation}>{this.state.password.error}</p>
+            }
+          </div>
+          
+          <Button
+            className={styles.button}
+            type="primary"
+            size="large"
+            htmlType="submit"
+            disabled={!isValid}>
+            Login
+          </Button>
         </form>
+
+        <div className={styles.footer}>
+          <p>Not a member yet?</p>
+          <a onClick={() => this.props.history.push('/signup')}>Sign up</a>
+        </div>
       </div>
     )
   }
