@@ -2,11 +2,17 @@
 
 .container {
   height: calc(100vh - 65px);
+  background-image: url('../../assets/landing-cover.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.buttons {
-
+.title {
+  font-size: 4rem;
+  font-weight: 700;
+  color: $col-white;
 }

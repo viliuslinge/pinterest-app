@@ -6,7 +6,7 @@ class Landing extends Component {
   render() {
     return (
       <div className={styles.container}>
-        <h1>Landing page</h1>
+        <h1 className={styles.title}>Print'everest</h1>
         
         <div className={styles.buttons}>
           <Button
