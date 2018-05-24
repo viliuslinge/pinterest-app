@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { FirebaseService } from '../api/auth';
-import { auth } from '../firebase';
+import { FirebaseService } from '../../api/auth';
+import { auth } from '../../firebase';
 
 const firebaseService = new FirebaseService();
 
-class Signup extends Component {
+class Login extends Component {
 
   state = {
     email: {
@@ -26,8 +26,6 @@ class Signup extends Component {
     },
     password: {
       required: 'Please enter a password',
-      pattern: 'It must contain at least one letter and one number',
-      minlength: 'Sorry.. it must be 6 characters minimum',
       valid: ''
     }
   }
@@ -54,24 +52,15 @@ class Signup extends Component {
   }
 
   validatePassword = () => {
-    const patternPassword = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/g;
-
     if (this.state.password.value.length === 0) {
       return this.setError('password', 'required')
-    };
-    if (this.state.password.value.length < 6) {
-      return this.setError('password', 'minlength')
-    };
-    if (patternPassword.test(this.state.password.value) === false) {
-      return this.setError('password', 'pattern')
     };
     return this.setError('password', 'valid')
   }
 
-  handleSignup = event => {
+  handleLogin = event => {
     event.preventDefault();
-    firebaseService.emailSignUp(this.state.email.value, this.state.password.value)
-      .then(() => this.props.history.push('/home'));
+    firebaseService.emailLogIn(this.state.email.value, this.state.password.value)
   }
 
   handleChange = event => {
@@ -105,7 +94,7 @@ class Signup extends Component {
     return (
       <div className="App">
         <form
-          onSubmit={this.handleSignup}
+          onSubmit={this.handleLogin}
           noValidate>
           <input
             type="email"
@@ -127,11 +116,11 @@ class Signup extends Component {
             this.state.password.error && <p>{this.state.password.error}</p>
           }
             
-          <button type="submit" disabled={!isValid}>Signup</button>
+          <button type="submit" disabled={!isValid}>Login</button>
         </form>
       </div>
     )
   }
 }
 
-export default Signup;
+export default Login;

@@ -5,8 +5,11 @@ export class FirebaseService {
     return auth.createUserWithEmailAndPassword(email, password)
       .then(data => {
         return this.updateUserData(data.user);
-        console.log(data.user)
       });
+  }
+
+  emailLogIn(email, password) {
+    return auth.signInWithEmailAndPassword(email, password);
   }
 
   updateUserData(user) {
@@ -16,9 +19,5 @@ export class FirebaseService {
       email: user.email
     }
     return userRef.set(userData, {merge: true});
-  }
-
-  signout() {
-    auth.signOut();
   }
 }
