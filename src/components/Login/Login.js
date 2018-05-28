@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FirebaseService } from '../../api/auth';
+import { FirebaseService } from '../../api/FirebaseService';
 
 import { Input } from 'antd';
 import { Button } from 'antd';
@@ -77,7 +77,7 @@ class Login extends Component {
     }), () => name === 'email' ? this.validateEmail() : this.validatePassword());
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.user && this.props.history.push('/home');
   }
 
