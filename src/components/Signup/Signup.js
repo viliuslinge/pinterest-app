@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FirebaseService } from '../../api/FirebaseService';
-import { Input, Spin, Button } from 'antd';
+import { Input, Button } from 'antd';
 import styles from './Signup.scss';
 
 const firebaseService = new FirebaseService();
@@ -16,7 +16,8 @@ class Signup extends Component {
       value: '',
       error: ''
     },
-    loading: false
+    loading: false,
+    signupError: null
   }
 
   validationMessage = {
@@ -71,8 +72,15 @@ class Signup extends Component {
 
   handleSignup = event => {
     event.preventDefault();
-    this.setState({ loading: true });
+    this.handleLoading();
+    if (this.state.loginError) {
+      this.setState({ loginError: null })
+    }
     firebaseService.emailSignUp(this.state.email.value, this.state.password.value)
+      .catch(() => {
+        this.handleLoading();
+        this.setState({ signupError: 'This email is already registered' });
+      })
   }
 
   handleChange = event => {
@@ -86,9 +94,8 @@ class Signup extends Component {
     }), () => name === 'email' ? this.validateEmail() : this.validatePassword());
   }
 
-  static getDerivedStateFromProps(props, state) {
-    props.user && props.history.push('/home');
-    return state
+  handleLoading = () => {
+    this.setState({ loading: !this.state.loading });
   }
 
   render() {
@@ -100,10 +107,14 @@ class Signup extends Component {
 
     return (
       <div className={styles.container}>
-        {
-          this.state.loading && <Spin tip="Loading..."></Spin>
-        }
         <h1 className={styles.title}>Sign up</h1>
+
+        <div className={styles.signupMessage}>
+          {
+            this.state.signupError &&
+            <p className={styles.signupError}>{this.state.signupError}</p>
+          }
+        </div>
 
         <form
           className={styles.form}
@@ -139,12 +150,13 @@ class Signup extends Component {
           </div>
           
           <Button
+            size="large"
             className={styles.button}
             type="primary"
-            size="large"
+            loading={this.state.loading}
             htmlType="submit"
             disabled={!isValid}>
-            Signup
+            { this.state.loading ? 'Loading' : 'Signup' }
           </Button>
         </form>
 

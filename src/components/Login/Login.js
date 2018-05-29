@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FirebaseService } from '../../api/FirebaseService';
-import { Input, Spin, Button } from 'antd';
+import { Input, Button } from 'antd';
 import styles from './Login.scss';
 
 const firebaseService = new FirebaseService();
@@ -16,7 +16,9 @@ class Login extends Component {
       value: '',
       error: ''
     },
-    loading: false
+    loading: false,
+    loginSuccess: null,
+    loginError: null
   }
 
   validationMessage = {
@@ -61,8 +63,16 @@ class Login extends Component {
 
   handleLogin = event => {
     event.preventDefault();
-    this.setState({ loading: true });
+    this.handleLoading();
+    if (this.state.loginError) {
+      this.setState({ loginError: null })
+    }
     firebaseService.emailLogIn(this.state.email.value, this.state.password.value)
+      .then(() => this.setState({ loginSuccess: 'Login successful!' }))
+      .catch(() => {
+        this.handleLoading();
+        this.setState({ loginError: 'Wrong email or password' });
+      })
   }
 
   handleChange = event => {
@@ -76,9 +86,8 @@ class Login extends Component {
     }), () => name === 'email' ? this.validateEmail() : this.validatePassword());
   }
 
-  static getDerivedStateFromProps(props, state) {
-    props.user && props.history.push('/home');
-    return state
+  handleLoading = () => {
+    this.setState({ loading: !this.state.loading });
   }
 
   render() {
@@ -90,10 +99,18 @@ class Login extends Component {
 
     return (
       <div className={styles.container}>
-        {
-          this.state.loading && <Spin tip="Loading..."></Spin>
-        }
         <h1 className={styles.title}>Log in</h1>
+        
+        <div className={styles.loginMessage}>
+          {
+            this.state.loginSuccess &&
+            <p className={styles.loginSuccess}>{this.state.loginSuccess}</p>
+          }
+          {
+            this.state.loginError &&
+            <p className={styles.loginError}>{this.state.loginError}</p>
+          }
+        </div>
 
         <form
           className={styles.form}
@@ -127,14 +144,15 @@ class Login extends Component {
               <p className={styles.validation}>{this.state.password.error}</p>
             }
           </div>
-          
+
           <Button
+            size="large"
             className={styles.button}
             type="primary"
-            size="large"
+            loading={this.state.loading}
             htmlType="submit"
             disabled={!isValid}>
-            Login
+            { this.state.loading ? 'Loading' : 'Login' }
           </Button>
         </form>
 

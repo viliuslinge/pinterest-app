@@ -5,6 +5,7 @@ import Login from '../../components/Login/Login';
 import Landing from '../Landing/Landing';
 import Home from '../Home/Home';
 import Post from '../../components/Post/Post';
+import { PrivateRoute, NoAuthRoute } from '../../components/PrivateRoute';
 
 import Navbar from '../../ui/Navbar/Navbar';
 import Profile from '../Profile/Profile';
@@ -80,19 +81,35 @@ class Root extends Component {
           }/>
           <Switch>
             <Route exact path="/" component={Landing}/>
-            <Route exact path="/signup" render={
-              (props) => <Signup {...props} user={this.state.user}/>
-            }/>
-            <Route exact path="/login" render={
-              (props) => <Login {...props} user={this.state.user}/>
-            }/>
-            <Route exact path="/home" component={Home}/>
-            <Route exact path="/post" render={
-              (props) => <Post {...props} user={this.state.user}/>
-            }/>
-            <Route exact path="/profile" render={
-              (props) => <Profile {...props} user={this.state.user}/>
-            }/>
+            <NoAuthRoute
+              user={this.state.user}
+              exact
+              path="/signup"
+              component={Signup}
+            />
+            <NoAuthRoute
+              user={this.state.user}
+              exact
+              path="/login"
+              component={Login}
+            />
+            <PrivateRoute
+              user={this.state.user}
+              exact
+              path="/home"
+              component={Home}/>
+            <PrivateRoute
+              user={this.state.user}
+              exact
+              path="/post"
+              component={Post}
+            />
+            <PrivateRoute
+              user={this.state.user}
+              exact
+              path="/profile"
+              component={Profile}
+            />
           </Switch>
         </div>
       </Router>

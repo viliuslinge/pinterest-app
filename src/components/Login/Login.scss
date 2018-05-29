@@ -31,3 +31,13 @@
 .button {
   width: 100%;
 }
+.loginMessage {
+  height: 50px;
+  text-align: center;
+}
+.loginSuccess {
+  color: $col-success;
+}
+.loginError {
+  color: $col-danger;
+}

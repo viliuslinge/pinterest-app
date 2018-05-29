@@ -1,5 +1,4 @@
 import { auth, db, storage } from '../firebase';
-import firebase from 'firebase';
 
 export class FirebaseService {
 

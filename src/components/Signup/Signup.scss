@@ -31,3 +31,10 @@
 .button {
   width: 100%;
 }
+.signupMessage {
+  height: 50px;
+  text-align: center;
+}
+.signupError {
+  color: $col-danger;
+}
