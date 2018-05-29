@@ -23,30 +23,52 @@ class Root extends Component {
   unsubscribe = undefined;
   unsubscribeAuth = undefined;
 
+  setLocalStorage = () => {
+    if (this.state.user) {
+      localStorage.setItem('currentUser', JSON.stringify(this.state.user));
+    }
+  }
+
+  getLocalStorage = () => {
+    const localStorageItem = localStorage.getItem('currentUser');
+    if (localStorageItem) {
+      const currentUser = JSON.parse(localStorageItem);
+      this.setState({ user: currentUser });
+    } else {
+      return null;
+    }
+  }
+
+  componentWillMount() {
+    this.getLocalStorage();
+  }
+
   componentDidMount() {
     this.unsubscribeAuth = auth.onAuthStateChanged(data => {
       if (data) {
-        if (!this.unsubscribe) {
-          this.unsubscribe = firebaseService.getProfile(data.uid)
-            .onSnapshot( (user) => {
-                if (user.exists) {
-                  this.setState({ user: user.data() })
-                } else {
-                  console.log("No such document!")
-                }}, (error) => {
-                  console.log(error);
-                }
-              )
-            }
+        this.unsubscribe = firebaseService.getProfile(data.uid)
+          .onSnapshot( (user) => {
+              if (user.exists) {
+                this.setState({ user: user.data() })
+              } else {
+                console.log("No such document!")
+              }}, (error) => {
+                console.log(error);
+              }
+            )
       } else {
         this.unsubscribe && this.unsubscribe()
         this.setState({ user: null });
       }
     })
+
+    window.onbeforeunload = (e) => {
+      this.setLocalStorage()
+    }
   }
 
   componentWillUnmount() {
-    this.unsubscribeAuth()
+    this.unsubscribeAuth();
   }
 
   render() {

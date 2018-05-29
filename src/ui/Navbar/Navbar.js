@@ -9,7 +9,10 @@ class Navbar extends Component {
 
   signout = () => {
     auth.signOut()
-      .then(() => this.props.history.push('/'));
+      .then(() => {
+        this.props.history.push('/');
+        localStorage.removeItem('currentUser');
+      });
   }
 
   render() {

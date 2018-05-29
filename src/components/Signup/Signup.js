@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { FirebaseService } from '../../api/FirebaseService';
-
-import { Input } from 'antd';
-import { Button } from 'antd';
+import { Input, Spin, Button } from 'antd';
 import styles from './Signup.scss';
 
 const firebaseService = new FirebaseService();
@@ -17,7 +15,8 @@ class Signup extends Component {
     password: {
       value: '',
       error: ''
-    }
+    },
+    loading: false
   }
 
   validationMessage = {
@@ -72,8 +71,8 @@ class Signup extends Component {
 
   handleSignup = event => {
     event.preventDefault();
+    this.setState({ loading: true });
     firebaseService.emailSignUp(this.state.email.value, this.state.password.value)
-      .then(() => this.props.history.push('/home'));
   }
 
   handleChange = event => {
@@ -87,8 +86,9 @@ class Signup extends Component {
     }), () => name === 'email' ? this.validateEmail() : this.validatePassword());
   }
 
-  componentWillMount() {
-    this.props.user && this.props.history.push('/home');
+  static getDerivedStateFromProps(props, state) {
+    props.user && props.history.push('/home');
+    return state
   }
 
   render() {
@@ -100,6 +100,9 @@ class Signup extends Component {
 
     return (
       <div className={styles.container}>
+        {
+          this.state.loading && <Spin tip="Loading..."></Spin>
+        }
         <h1 className={styles.title}>Sign up</h1>
 
         <form
