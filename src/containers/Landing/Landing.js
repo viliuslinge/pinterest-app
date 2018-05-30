@@ -10,11 +10,13 @@ class Landing extends Component {
         
         <div className={styles.buttons}>
           <Button
+            className={styles.button}
             size="large"
             onClick={() => this.props.history.push('/signup')}>
             Signup
           </Button>
           <Button
+            className={styles.button}
             size="large"
             onClick={() => this.props.history.push('/login')}>
             Login

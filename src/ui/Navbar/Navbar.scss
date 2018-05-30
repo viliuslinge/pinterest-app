@@ -1,3 +1,5 @@
+@import '../../theme.scss';
+
 .navbar {
   padding: 15px;
   height: 65px;
@@ -5,8 +7,8 @@
   align-items: center;
   justify-content: space-between;
   width: 100vw;
-  border-bottom: 1px solid #e2e2e2;
-  background-color: white;
+  border-bottom: 1px solid $col-grey-1;
+  background-color: $col-white;
 }
 .logo {
   height: 25px;
@@ -15,6 +17,9 @@
 .navtools {
   display: flex;
   align-items: center;
+}
+.button {
+  margin: 0 5px;
 }
 .user {
   margin: 0 20px 0 0;

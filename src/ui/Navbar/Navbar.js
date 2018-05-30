@@ -2,10 +2,22 @@ import React, { Component } from 'react';
 import styles from './Navbar.scss';
 import Logo from '../../assets/logo.svg'
 import { auth } from '../../firebase';
-
-import { Button, Avatar, Menu, Dropdown, Icon } from 'antd';
+import Post from '../../components/Post/Post';
+import { Modal, Button, Avatar, Menu, Dropdown, Icon } from 'antd';
 
 class Navbar extends Component {
+
+  state = {
+    postModalVisible: false
+  }
+
+  openPostModal = () => {
+    this.setState({ postModalVisible: true });
+  }
+
+  closePostModal = (e) => {
+    this.setState({ postModalVisible: false });
+  }
 
   signout = () => {
     auth.signOut()
@@ -42,23 +54,31 @@ class Navbar extends Component {
         {
           !this.props.user &&
           <div className={styles.navtools}>
-            <Button onClick={() => this.props.history.push('/signup')}>Signup</Button>
-            <Button onClick={() => this.props.history.push('/login')}>Login</Button>
+            <Button className={styles.button} onClick={() => this.props.history.push('/signup')}>Signup</Button>
+            <Button className={styles.button} onClick={() => this.props.history.push('/login')}>Login</Button>
           </div>
         }
         {
           this.props.user &&
           <div>
             <Button
-              type="primary"
-              shape="circle"
               icon="plus"
-              onClick={() => this.props.history.push('/post')} />
+              onClick={this.openPostModal} />
+
+            <Modal
+              title="Create New Pin"
+              visible={this.state.postModalVisible}
+              footer={null}
+              width={420}
+              onCancel={this.closePostModal}>
+              {
+                this.state.postModalVisible &&
+                <Post sharePost={this.closePostModal} {...this.props.user}/>
+              }
+            </Modal>
+
             <Dropdown overlay={userMenu} trigger={['click']}>
-              <Button size="large" style={{ marginLeft: 8 }}>
-                <Avatar
-                  size="small"
-                  src={this.props.user.photoURL} />
+              <Button style={{ marginLeft: 10 }}>
                 {this.props.user.name}
                 <Icon type="down" />
               </Button>

@@ -4,7 +4,6 @@ import Login from '../../components/Login/Login';
 
 import Landing from '../Landing/Landing';
 import Home from '../Home/Home';
-import Post from '../../components/Post/Post';
 import { PrivateRoute, NoAuthRoute } from '../../components/PrivateRoute';
 
 import Navbar from '../../ui/Navbar/Navbar';
@@ -98,12 +97,6 @@ class Root extends Component {
               exact
               path="/home"
               component={Home}/>
-            <PrivateRoute
-              user={this.state.user}
-              exact
-              path="/post"
-              component={Post}
-            />
             <PrivateRoute
               user={this.state.user}
               exact

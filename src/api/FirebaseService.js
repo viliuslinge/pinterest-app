@@ -122,4 +122,13 @@ export class FirebaseService {
     }
     return this.getPost(id).set(postData, {merge: true});
   }
+
+  deleteImage(id, pictureName) {
+    return this.getPost(id).update({
+      imageName: '',
+      photoURL: ''
+    }).then(
+      () => { storage.ref().child(`posts/${pictureName}`).delete() }
+    )
+  }
 }
