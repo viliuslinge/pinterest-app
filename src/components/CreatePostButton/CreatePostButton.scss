@@ -1,3 +1,5 @@
+@import '../../theme.scss';
+
 .itemContainer {
   height: 400px;
   display: flex;
@@ -9,13 +11,13 @@
   height: 380px;
   width: calc(100% - 20px);
   border-radius: 1px;
-  cursor: zoom-in;
+  cursor: pointer;
   &:hover {
     transition: 0.2s ease-in-out;
     transition: box-shadow 0.1s ease-in-out;
     background-color: #f1f1f1;
     box-shadow: 0 0 0 10px #f1f1f1;
-    .image::before {
+    .button::before {
       content: "";
       width: 100%;
       height: 100%;
@@ -25,41 +27,23 @@
     }
   }
 }
-.image {
+.button {
   height: 305px;
   width: 100%;
-  background-size: cover;
-  background-position: center;
   border-radius: 6px;
   background-color: #efefef;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.detailsContainer {
+.title {
   font-size: 0.9rem;
   font-weight: 700;
   padding: 5px;
-  color: grey;
+  color: $col-grey-2;
 }
-.userContainer {
-  display: flex;
-  align-items: center;
-}
-.name {
-  font-size: 0.8rem;
-  margin: 0 0 0 5px;
-}
-.description {
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.infoContainer {
-  font-size: 0.6rem;
-  margin: 5px 0;
-  display: flex;
-  align-items: center;
-  p {
-    margin: 0;
-  }
+.icon {
+  font-size: 2rem;
+  color: $col-black;
 }

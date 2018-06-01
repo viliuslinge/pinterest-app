@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import Signup from '../../components/Signup/Signup';
 import Login from '../../components/Login/Login';
-
 import Landing from '../Landing/Landing';
 import Home from '../Home/Home';
-import { PrivateRoute, NoAuthRoute } from '../../components/PrivateRoute';
-
+import Settings from '../Settings/Settings';
 import Navbar from '../../ui/Navbar/Navbar';
 import Profile from '../Profile/Profile';
 import { FirebaseService } from '../../api/FirebaseService';
 import { auth } from '../../firebase';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { PrivateRoute, NoAuthRoute } from '../../components/PrivateRoute';
 
 const firebaseService = new FirebaseService();
 
@@ -100,9 +99,14 @@ class Root extends Component {
             <PrivateRoute
               user={this.state.user}
               exact
-              path="/profile"
+              path={`/profile/${this.state.user && this.state.user.uid}`}
               component={Profile}
             />
+            <PrivateRoute
+              user={this.state.user}
+              exact
+              path="/Settings"
+              component={Settings}/>
           </Switch>
         </div>
       </Router>

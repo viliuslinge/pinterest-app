@@ -1,0 +1,55 @@
+@import '../../theme.scss';
+
+.postContainer {
+  width: 350px;
+  margin: 0 auto 10px auto;
+}
+.imageUpload {
+  width: 330px;
+  height: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+.imageUploaded {
+  width:330px;
+  height: auto;
+}
+.imageUploadedReview {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.uploadIcon {
+  font-size: 1.5rem;
+}
+.hint {
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 10px 0 20px 0;
+  color: $col-grey-2;
+  margin: 0;
+}
+.description {
+  margin-top: 10px;
+  color: $col-grey-2;
+}
+.userDetails {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.userDetailsName {
+  font-size: 0.9rem;
+  color: $col-grey-2;
+  font-weight: 700;
+  margin: 0 0 0 10px;
+}

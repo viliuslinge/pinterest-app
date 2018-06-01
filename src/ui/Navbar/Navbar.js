@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import styles from './Navbar.scss';
 import Logo from '../../assets/logo.svg'
 import { auth } from '../../firebase';
-import Post from '../../components/Post/Post';
-import { Modal, Button, Avatar, Menu, Dropdown, Icon } from 'antd';
+import CreatePost from '../../components/CreatePost/CreatePost';
+import { Modal, Button, Menu, Dropdown, Icon } from 'antd';
 
 class Navbar extends Component {
 
@@ -33,11 +33,16 @@ class Navbar extends Component {
       <Menu>
         <Menu.Item
           key="0"
-          onClick={() => this.props.history.push('/profile')}>
+          onClick={() => this.props.history.push(`/profile/${this.props.user.uid}`)}>
           Profile
         </Menu.Item>
         <Menu.Item
           key="1"
+          onClick={() => this.props.history.push('/settings')}>
+          Settings
+        </Menu.Item>
+        <Menu.Item
+          key="2"
           onClick={this.signout}>
           Sign out
         </Menu.Item>
@@ -50,12 +55,24 @@ class Navbar extends Component {
           className={styles.logo}
           src={Logo}
           alt="Clapp"
-          onClick={() => this.props.history.push('/')} />
+          onClick={() => {
+            this.props.user
+              ? this.props.history.push('/home')
+              : this.props.history.push('/')
+          }} />
         {
           !this.props.user &&
           <div className={styles.navtools}>
-            <Button className={styles.button} onClick={() => this.props.history.push('/signup')}>Signup</Button>
-            <Button className={styles.button} onClick={() => this.props.history.push('/login')}>Login</Button>
+            <Button
+              className={styles.button}
+              onClick={() => this.props.history.push('/signup')}>
+              Signup
+            </Button>
+            <Button
+              className={styles.button}
+              onClick={() => this.props.history.push('/login')}>
+              Login
+            </Button>
           </div>
         }
         {
@@ -73,7 +90,7 @@ class Navbar extends Component {
               onCancel={this.closePostModal}>
               {
                 this.state.postModalVisible &&
-                <Post sharePost={this.closePostModal} {...this.props.user}/>
+                <CreatePost sharePost={this.closePostModal} {...this.props.user}/>
               }
             </Modal>
 

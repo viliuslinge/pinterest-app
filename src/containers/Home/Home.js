@@ -1,14 +1,42 @@
 import React, { Component } from 'react';
+import styles from './Home.scss';
+import Post from '../../components/Post/Post';
+import { FirebaseService } from '../../api/FirebaseService';
+
+const firebaseService = new FirebaseService();
 
 class Home extends Component {
+  
+  state = {
+    activePosts: null
+  }
+  unsubscribeActivePosts = undefined;
+
+  componentDidMount() {
+    this.unsubscribeActivePosts = firebaseService
+      .subscribeToAllActivePosts(posts => {
+        this.setState({ activePosts: posts })
+      }
+    )
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeActivePosts();
+  }
 
   render() {
     return (
-      <div>
-        <p>Home page</p>
+      <div className={styles.postsContainer}>
+        {
+          this.state.activePosts &&
+          this.state.activePosts.map(post => {
+            return <Post key={post.postId} data={post} />
+          })
+        }
       </div>
     );
   }
 }
 
 export default Home;
+

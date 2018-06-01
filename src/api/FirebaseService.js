@@ -21,7 +21,8 @@ export class FirebaseService {
       uid: user.uid,
       email: user.email,
       name: user.displayName || 'Guest',
-      photoURL: user.photoURL || 'https://goo.gl/8kwFW5'
+      photoURL: user.photoURL || 'https://goo.gl/8kwFW5',
+      profileImageName:  user.photoImageName || ''
     }
     return userRef.set(userData, {merge: true});
   }
@@ -53,7 +54,7 @@ export class FirebaseService {
           .then((downloadURL) => {
             if (downloadURL) {
               upload.url = downloadURL;
-              this.changeUserProfileImage(upload, id);
+              this.updateUserProfileImage(id, upload.url, fileName);
               return;
             } else {
               console.log('File not uploaded');
@@ -63,8 +64,19 @@ export class FirebaseService {
     )
   }
 
-  changeUserProfileImage(upload, id) {
-    return this.getProfile(id).update({ photoURL: upload.url });
+  updateUserProfileImage(id, uploadURL, fileName) {
+    const userData = {
+      photoURL: uploadURL || '',
+      profileImageName: fileName || ''
+    }
+    return this.getProfile(id).set(userData, {merge: true});
+  }
+
+  deleteProfileImage(id, fileName) {
+    return this.updateUserProfileImage(id)
+      .then(
+        () => { storage.ref().child(`users/${fileName}`).delete() }
+      )
   }
 
   // POST SERVICES
@@ -83,6 +95,58 @@ export class FirebaseService {
   getPost(id) {
     return db.doc(`posts/${id}`);
   }
+
+  createPostFromDoc(doc) {
+    const data = doc.data()
+    return {
+      postId: doc.id,
+      imageName: data.imageName,
+      description: data.description,
+      photoURL: data.photoURL,
+      status: data.status,
+      user_uid: data.user_uid,
+      created_at: data.created_at
+    }
+  }
+
+  subscribeToAllActivePosts(callbackFunction) {
+     return db.collection('posts')
+      .where('status', '==', 'active')
+      .orderBy('created_at', 'desc')
+      .onSnapshot(snapshot => {
+        const allPosts = []
+        snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
+        callbackFunction(allPosts);
+      }
+    );
+  }
+
+  subscribeToUserActivePosts(callbackFunction, user_uid) {
+    return db.collection('posts')
+     .where('status', '==', 'active')
+     .where('user_uid', '==', user_uid)
+     .orderBy('created_at', 'desc')
+     .onSnapshot(snapshot => {
+       const allPosts = []
+       snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
+       callbackFunction(allPosts);
+     }
+   );
+ }
+
+  // getUserActivePosts(user_uid) {
+  //   return db.collection('posts')
+  //     .where('status', '==', 'active')
+  //     .where('user_uid', '==', user_uid)
+  //     .orderBy('created_at', 'desc')
+  //     .get()
+  //     .then((snapshot) => {
+  //       const allPosts = []
+  //       snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
+  //       return allPosts
+  //     })
+  //     .catch(() => [])
+  // }
 
   uploadPostImage(event, id) {
     const upload = event.file.originFileObj;
@@ -105,7 +169,7 @@ export class FirebaseService {
           .then((downloadURL) => {
             if (downloadURL) {
               upload.url = downloadURL;
-              this.updatePostImage(upload, id, fileName);
+              this.updatePostImage(id, upload.url, fileName);
               return;
             } else {
               console.log('File not uploaded');
@@ -115,20 +179,18 @@ export class FirebaseService {
     )
   }
 
-  updatePostImage(upload, id, fileName) {
+  updatePostImage(id, uploadURL, fileName) {
     const postData = {
-      photoURL: upload.url,
-      imageName: fileName
+      photoURL: uploadURL || '',
+      imageName: fileName || ''
     }
     return this.getPost(id).set(postData, {merge: true});
   }
 
-  deleteImage(id, pictureName) {
-    return this.getPost(id).update({
-      imageName: '',
-      photoURL: ''
-    }).then(
-      () => { storage.ref().child(`posts/${pictureName}`).delete() }
-    )
+  deleteImage(id, fileName) {
+    return this.updatePostImage(id)
+      .then(
+        () => { storage.ref().child(`posts/${fileName}`).delete() }
+      )
   }
 }
