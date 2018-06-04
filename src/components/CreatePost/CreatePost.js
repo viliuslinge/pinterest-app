@@ -83,7 +83,8 @@ class Post extends Component {
 
   deleteImage = () => {
     this.setState({ loading: false });
-    firebaseService.deleteImage(this.state.postId, this.state.postData.imageName);
+    firebaseService.deleteImage(this.state.postData.imageName)
+      .then(firebaseService.updatePostImage(this.state.postId))
   }
 
   componentDidMount() {

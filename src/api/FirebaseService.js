@@ -184,13 +184,14 @@ export class FirebaseService {
       photoURL: uploadURL || '',
       imageName: fileName || ''
     }
-    return this.getPost(id).set(postData, {merge: true});
+    this.getPost(id).set(postData, {merge: true});
   }
 
-  deleteImage(id, fileName) {
-    return this.updatePostImage(id)
-      .then(
-        () => { storage.ref().child(`posts/${fileName}`).delete() }
-      )
+  deleteImage(fileName) {
+    return storage.ref().child(`posts/${fileName}`).delete();
+  }
+
+  deletePost(id) {
+    return this.getPost(id).delete();
   }
 }

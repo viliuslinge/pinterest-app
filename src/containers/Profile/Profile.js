@@ -61,7 +61,7 @@ class Profile extends Component {
           {
             this.state.userActivePosts &&
             this.state.userActivePosts.map(post => {
-              return <Post key={post.postId} data={post} />
+              return <Post key={post.postId} data={post} user={this.props.user} />
             })
           }
         </div>

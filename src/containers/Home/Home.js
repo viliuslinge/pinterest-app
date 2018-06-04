@@ -30,7 +30,7 @@ class Home extends Component {
         {
           this.state.activePosts &&
           this.state.activePosts.map(post => {
-            return <Post key={post.postId} data={post} />
+            return <Post key={post.postId} data={post} user={this.props.user} />
           })
         }
       </div>

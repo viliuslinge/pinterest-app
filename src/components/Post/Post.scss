@@ -23,6 +23,9 @@
       position: absolute;
       border-radius: 6px;
     }
+    .deleteButton {
+      display: block;
+    }
   }
 }
 .image {
@@ -40,6 +43,11 @@
   padding: 5px;
   color: grey;
 }
+.infoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .userContainer {
   display: flex;
   align-items: center;
@@ -48,18 +56,16 @@
   font-size: 0.8rem;
   margin: 0 0 0 5px;
 }
+.date {
+  font-size: 0.6rem;
+  margin: 5px 0;
+}
 .description {
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.infoContainer {
-  font-size: 0.6rem;
-  margin: 5px 0;
-  display: flex;
-  align-items: center;
-  p {
-    margin: 0;
-  }
+.deleteButton {
+  display: none;
 }
