@@ -12,7 +12,7 @@ class Post extends Component {
   state = {
     postId: null,
     postData: null,
-    photoURL: null,
+    thumbnailURL: null,
     postDescription: '',
     activeTabKey: '1',
     loading: false
@@ -41,7 +41,7 @@ class Post extends Component {
         if (data.exists) {
           this.setState({
             postData: data.data(),
-            photoURL: data.data().photoURL
+            thumbnailURL: data.data().thumbnailURL
           })
         } else {
           console.log("No such document!")
@@ -64,10 +64,13 @@ class Post extends Component {
   }
 
   handleImageUpload = (info) => {
-    if (info.file.status === 'error') {
+    const validator = /image\/[.]*/;
+    if (validator.test(info.file.type) && info.file.status === 'error') {
       this.setState({ loading: true });
       this.uploadImage(info)
       return;
+    } else if (!validator.test(info.file.type) && info.file.status === 'error') {
+      message.warning('Oops, file type should be image!');
     }
   }
 
@@ -77,14 +80,18 @@ class Post extends Component {
         description: this.state.postDescription ,
         status: 'active'
       });
-    this.props.sharePost();
+    this.props.closeModal();
     message.success('Your post has been shared!');
   }
 
   deleteImage = () => {
     this.setState({ loading: false });
+
     firebaseService.deleteImage(this.state.postData.imageName)
       .then(firebaseService.updatePostImage(this.state.postId))
+
+    firebaseService.deleteThumbnail(this.state.postData.thumbnailName)
+      .then(firebaseService.updatePostThumbnail(this.state.postId))
   }
 
   componentDidMount() {
@@ -121,11 +128,12 @@ class Post extends Component {
               className="avatar-uploader"
               showUploadList={false}
               action=""
+              accept="image/*"
               onChange={this.handleImageUpload}>
               {
-                this.state.photoURL
+                this.state.thumbnailURL
                   ? <img
-                      src={this.state.photoURL}
+                      src={this.state.thumbnailURL}
                       className={styles.imageUploaded}
                       alt="avatar" />
                   : uploadButton
@@ -133,7 +141,7 @@ class Post extends Component {
             </Upload>
 
             {
-              this.state.photoURL &&
+              this.state.thumbnailURL &&
               <div className={styles.buttonContainer}>
                 <Button onClick={this.deleteImage} size="large" icon="delete" />
                 <Button
@@ -178,7 +186,7 @@ class Post extends Component {
               Review your post and share it with others!
             </p>
             <img
-              src={this.state.photoURL}
+              src={this.state.thumbnailURL}
               className={styles.imageUploadedReview}
               alt="post" />
             <div className={styles.userDetails}>

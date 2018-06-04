@@ -19,6 +19,8 @@ class Post extends Component {
       .then(() => {
         firebaseService.deleteImage(this.props.data.imageName)
           .catch(error => console.log(error));
+        firebaseService.deleteThumbnail(this.props.data.thumbnailName)
+          .catch(error => console.log(error));
       })
       .catch(error => console.log(error));
     message.success('Your post has been deleted.');
@@ -37,7 +39,7 @@ class Post extends Component {
 
   render() {
     const imageStyle = {
-      backgroundImage: `url(${this.props.data.photoURL})`
+      backgroundImage: `url(${this.props.data.thumbnailURL})`
     }
 
     return (

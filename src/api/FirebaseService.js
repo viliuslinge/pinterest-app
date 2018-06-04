@@ -1,4 +1,7 @@
 import { auth, db, storage } from '../firebase';
+import { ImgCompressor } from './ImgCompressor';
+
+const imgCompressor = new ImgCompressor();
 
 export class FirebaseService {
 
@@ -34,34 +37,37 @@ export class FirebaseService {
   }
 
   uploadUserProfileImage(event, id) {
-    const upload = event.file.originFileObj;
+    let upload = event.file.originFileObj;
+
     if (!upload) {
       console.log('No files found');
       return;
     }
 
-    const storageRef = storage.ref()
-    const fileName = new Date().getTime();
-    const uploadTask = storageRef.child(`users/${fileName}`).put(upload);
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      }, (error) => {
-        console.log(error);
-      }, () => {
-        uploadTask.snapshot.ref.getDownloadURL()
-          .then((downloadURL) => {
-            if (downloadURL) {
-              upload.url = downloadURL;
-              this.updateUserProfileImage(id, upload.url, fileName);
-              return;
-            } else {
-              console.log('File not uploaded');
-            }
-          })
-      }
-    )
+    imgCompressor.compressImage(upload)
+      .then((result) => {
+        upload = result;
+        const storageRef = storage.ref()
+        const fileName = new Date().getTime();
+        const uploadTask = storageRef.child(`users/${fileName}`).put(upload);
+    
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {},
+          (error) => { console.log(error) },
+          () => {
+            uploadTask.snapshot.ref.getDownloadURL()
+              .then((downloadURL) => {
+                if (downloadURL) {
+                  upload.url = downloadURL;
+                  this.updateUserProfileImage(id, upload.url, fileName);
+                  return;
+                } else { console.log('File not uploaded') }
+              })
+          }
+        )
+      })
+      .catch((error) => console.log(error))
   }
 
   updateUserProfileImage(id, uploadURL, fileName) {
@@ -84,9 +90,11 @@ export class FirebaseService {
   createPost(id) {
     return db.collection('posts').add({
       created_at: new Date().getTime(),
-      imageName: '',
       description: '',
       photoURL: '',
+      imageName: '',
+      thumbnailURL: '',
+      thumbnailName: '',
       status: 'draft',
       user_uid: id
     })
@@ -100,9 +108,11 @@ export class FirebaseService {
     const data = doc.data()
     return {
       postId: doc.id,
-      imageName: data.imageName,
       description: data.description,
       photoURL: data.photoURL,
+      imageName: data.imageName,
+      thumbnailURL: data.thumbnailURL,
+      thumbnailName: data.thumbnailName,
       status: data.status,
       user_uid: data.user_uid,
       created_at: data.created_at
@@ -149,46 +159,81 @@ export class FirebaseService {
   // }
 
   uploadPostImage(event, id) {
-    const upload = event.file.originFileObj;
+    let upload = event.file.originFileObj;
+    let uploadThumb;
+
     if (!upload) {
       console.log('No files found');
       return;
     }
 
     const storageRef = storage.ref()
-    const fileName = new Date().getTime();
-    const uploadTask = storageRef.child(`posts/${fileName}`).put(upload);
+    const imageName = new Date().getTime();
+    const uploadImage = storageRef.child(`posts/${imageName}`).put(upload);
 
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      }, (error) => {
-        console.log(error);
-      }, () => {
-        uploadTask.snapshot.ref.getDownloadURL()
+    uploadImage.on(
+      'state_changed',
+      (snapshot) => {},
+      (error) => { console.log(error) },
+      () => {
+        uploadImage.snapshot.ref.getDownloadURL()
           .then((downloadURL) => {
             if (downloadURL) {
               upload.url = downloadURL;
-              this.updatePostImage(id, upload.url, fileName);
+              this.updatePostImage(id, upload.url, imageName);
               return;
-            } else {
-              console.log('File not uploaded');
-            }
+            } else { console.log('Image not uploaded') }
           })
       }
     )
+
+    imgCompressor.compressImage(upload)
+      .then((result) => {
+        uploadThumb = result;
+        const thumbnailName = new Date().getTime();
+        const uploadThumbnail = storageRef.child(`thumbnails/${thumbnailName}`).put(uploadThumb);
+
+        uploadThumbnail.on(
+          'state_changed',
+          (snapshot) => {},
+          (error) => { console.log(error) },
+          () => {
+            uploadThumbnail.snapshot.ref.getDownloadURL()
+              .then((downloadURL) => {
+                if (downloadURL) {
+                  uploadThumb.url = downloadURL;
+                  this.updatePostThumbnail(id, uploadThumb.url, thumbnailName);
+                  return;
+                } else { console.log('Thumbnail not uploaded') }
+              })
+          }
+        )
+      })
+      .catch((err) => { console.log('fail') })
   }
 
-  updatePostImage(id, uploadURL, fileName) {
+  updatePostImage(id, uploadURL, imageName) {
     const postData = {
       photoURL: uploadURL || '',
-      imageName: fileName || ''
+      imageName: imageName || ''
+    }
+    this.getPost(id).set(postData, {merge: true});
+  }
+
+  updatePostThumbnail(id, thumbnailURL, thumbnailName) {
+    const postData = {
+      thumbnailURL: thumbnailURL || '',
+      thumbnailName: thumbnailName || ''
     }
     this.getPost(id).set(postData, {merge: true});
   }
 
   deleteImage(fileName) {
     return storage.ref().child(`posts/${fileName}`).delete();
+  }
+
+  deleteThumbnail(fileName) {
+    return storage.ref().child(`thumbnails/${fileName}`).delete();
   }
 
   deletePost(id) {

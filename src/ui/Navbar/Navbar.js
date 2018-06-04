@@ -15,7 +15,7 @@ class Navbar extends Component {
     this.setState({ postModalVisible: true });
   }
 
-  closePostModal = (e) => {
+  closePostModal = () => {
     this.setState({ postModalVisible: false });
   }
 
@@ -90,7 +90,7 @@ class Navbar extends Component {
               onCancel={this.closePostModal}>
               {
                 this.state.postModalVisible &&
-                <CreatePost sharePost={this.closePostModal} {...this.props.user}/>
+                <CreatePost closeModal={this.closePostModal} {...this.props.user}/>
               }
             </Modal>
 
