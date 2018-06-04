@@ -9,17 +9,20 @@ const { TextArea } = Input;
 class Settings extends Component {
 
   state = {
-    name: ''
+    name: '',
+    surname: '',
+    about: ''
   }
 
-  handleChange = (event) => {
-    const value = event.target.value
-    this.setState({ name: value })
+  handleChange = event => {
+    const content = event.target.value;
+    const name = event.target.name;
+    this.setState({ [name]: content });
   }
 
   saveUserSettings = () => {
     firebaseService.getProfile(this.props.user.uid)
-      .update({ name: this.state.name })
+      .update({ ...this.state })
       .then(message.success('Settings have been saved!'))
   }
 
@@ -35,7 +38,11 @@ class Settings extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    return props.user ? {name: props.user.name} : null;
+    return props.user ? {
+      name: props.user.name,
+      surname: props.user.surname,
+      about: props.user.about
+    } : null;
   }
 
   render() {
@@ -57,34 +64,39 @@ class Settings extends Component {
 
           <div className={styles.inputContainer}>
             <div className={styles.inputBox}>
-              <label className={styles.label} for="name">First Name</label>
+              <label className={styles.label} htmlFor="name">First Name</label>
               <Input
                 id="name"
                 size="large"
+                name="name"
                 type="text"
+                placeholder="First name"
                 value={this.state.name}
                 onChange={this.handleChange} />
             </div>
 
             <div className={styles.inputBox}>
-              <label className={styles.label} for="name">Last Name</label>
+              <label className={styles.label} htmlFor="name">Last Name</label>
               <Input
                 id="surname"
                 size="large"
+                name="surname"
                 type="text"
-                value={this.state.name}
+                placeholder="Last name"
+                value={this.state.surname}
                 onChange={this.handleChange} />
             </div>
 
             <div className={styles.inputBox}>
-              <label className={styles.label} for="about">About</label>
+              <label className={styles.label} htmlFor="about">About</label>
               <TextArea
                 id="about"
                 rows={4}
                 size="large"
+                name="about"
                 type="textarea"
                 placeholder="About you"
-                value={this.state.name}
+                value={this.state.about}
                 onChange={this.handleChange}/>
             </div>
 

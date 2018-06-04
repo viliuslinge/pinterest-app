@@ -24,6 +24,8 @@ export class FirebaseService {
       uid: user.uid,
       email: user.email,
       name: user.displayName || 'Guest',
+      surname: user.surname || '',
+      about: user.about || '',
       photoURL: user.photoURL || 'https://goo.gl/8kwFW5',
       profileImageName:  user.photoImageName || ''
     }
@@ -95,6 +97,7 @@ export class FirebaseService {
       imageName: '',
       thumbnailURL: '',
       thumbnailName: '',
+      tags: [],
       status: 'draft',
       user_uid: id
     })
@@ -113,6 +116,7 @@ export class FirebaseService {
       imageName: data.imageName,
       thumbnailURL: data.thumbnailURL,
       thumbnailName: data.thumbnailName,
+      tags: data.tags,
       status: data.status,
       user_uid: data.user_uid,
       created_at: data.created_at

@@ -46,8 +46,11 @@ class Profile extends Component {
       <div className={styles.container}>
         <div className={styles.profileContainer}>
           <div>
-            <h1 className={styles.name}>{this.props.user.name}</h1>
+            <h1 className={styles.name}>
+              {this.props.user.name} {this.props.user.surname}
+            </h1>
             <p>{this.props.user.email}</p>
+            <p className={styles.about}>{this.props.user.about}</p>
           </div>
           <div className={styles.profilePic} style={imageStyle}></div>
         </div>
@@ -74,7 +77,7 @@ class Profile extends Component {
           onCancel={this.closePostModal}>
           {
             this.state.postModalVisible &&
-            <CreatePost sharePost={this.closePostModal} {...this.props.user}/>
+            <CreatePost closeModal={this.closePostModal} {...this.props.user}/>
           }
         </Modal>
       </div>

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Avatar, Popconfirm, message, Button } from 'antd';
+import { Avatar, message, Button, Modal } from 'antd';
 import styles from './Post.scss';
 import { FirebaseService } from '../../api/FirebaseService';
 import NumberFormatter from '../../utils/number-formatter';
+import EditPost from '../EditPost/EditPost';
 
 const firebaseService = new FirebaseService();
 
@@ -10,21 +11,18 @@ class Post extends Component {
   
   state = {
     user: null,
+    postModalVisible: false
+  }
+
+  openPostModal = () => {
+    this.setState({ postModalVisible: true });
+  }
+
+  closePostModal = () => {
+    this.setState({ postModalVisible: false });
   }
 
   unsubscribe = undefined;
-
-  deletePost = () => {
-    firebaseService.deletePost(this.props.data.postId)
-      .then(() => {
-        firebaseService.deleteImage(this.props.data.imageName)
-          .catch(error => console.log(error));
-        firebaseService.deleteThumbnail(this.props.data.thumbnailName)
-          .catch(error => console.log(error));
-      })
-      .catch(error => console.log(error));
-    message.success('Your post has been deleted.');
-  };
 
   componentWillMount() {
     this.unsubscribe = firebaseService.getProfile(this.props.data.user_uid)
@@ -67,16 +65,24 @@ class Post extends Component {
               </div>
               {
                 this.props.user.uid === this.props.data.user_uid &&
-                <Popconfirm
-                  title="Are you sure delete this post?"
-                  onConfirm={this.deletePost}
-                  okText="Yes" cancelText="No">
-                  <Button
-                    className={styles.deleteButton}
-                    size="large"
-                    icon="delete" />
-                </Popconfirm>
+                <Button
+                  size="large"
+                  icon="edit"
+                  className={styles.editButton}
+                  onClick={this.openPostModal} />
               }
+
+              <Modal
+                title="Edit Post"
+                visible={this.state.postModalVisible}
+                footer={null}
+                width={750}
+                onCancel={this.closePostModal}>
+                {
+                  this.state.postModalVisible &&
+                  <EditPost closeModal={this.closePostModal} post={this.props.data} />
+                }
+              </Modal>
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@
       position: absolute;
       border-radius: 6px;
     }
-    .deleteButton {
+    .editButton {
       display: block;
     }
   }
@@ -66,6 +66,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.deleteButton {
+.editButton {
   display: none;
 }

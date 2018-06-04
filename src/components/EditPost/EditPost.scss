@@ -1,0 +1,37 @@
+@import '../../theme.scss';
+
+.postContainer {
+  margin: 0 auto 10px auto;
+}
+.contentContainer {
+  display: flex;
+  justify-content: space-between;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.label {
+  font-weight: 600;
+}
+.description {
+  margin-bottom: 15px;
+}
+.image {
+  width: 330px;
+  height: 330px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: $col-black;
+  margin: 0;
+  padding: 0;
+  border-radius: 6px;
+}
+.button {
+  margin-right: 10px;
+  &:last-of-type {
+    margin-right: 0;
+  }
+}

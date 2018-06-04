@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { message, Avatar, Upload, Button, Icon, Tabs, Input } from 'antd';
+import { message, Upload, Button, Icon, Tabs, Input, Select } from 'antd';
 import { FirebaseService } from '../../api/FirebaseService';
 import styles from './CreatePost.scss';
 
 const firebaseService = new FirebaseService();
 const TabPane = Tabs.TabPane;
 const { TextArea } = Input;
+const Option = Select.Option;
 
 class Post extends Component {
 
@@ -19,6 +20,11 @@ class Post extends Component {
   }
 
   unsubscribe = undefined;
+  tags = [
+    <Option key={'Art'}>Art</Option>,
+    <Option key={'Science'}>Science</Option>
+  ];
+  selectedTags = [];
 
   createNewPost = () => {
     firebaseService.createPost(this.props.uid)
@@ -74,10 +80,15 @@ class Post extends Component {
     }
   }
 
+  handleTagChange = (value) => {
+    this.selectedTags = value
+  }
+
   updateNewPost = () => {
     firebaseService.getPost(this.state.postId)
       .update({ 
-        description: this.state.postDescription ,
+        description: this.state.postDescription,
+        tags: this.selectedTags,
         status: 'active'
       });
     this.props.closeModal();
@@ -154,7 +165,7 @@ class Post extends Component {
             } 
           </TabPane>
 
-          <TabPane tab="2.Comment" key="2" disabled>
+          <TabPane tab="2.Describe" key="2" disabled>
             <p className={styles.hint}>
               Write down all your ideas here!
             </p>
@@ -181,23 +192,19 @@ class Post extends Component {
             </div>
           </TabPane>
 
-          <TabPane tab="3.Share" key="3" disabled>
+          <TabPane tab="3.Tag" key="3" disabled>
             <p className={styles.hint}>
-              Review your post and share it with others!
+              Add at least one tag and share your post with others!
             </p>
-            <img
-              src={this.state.thumbnailURL}
-              className={styles.imageUploadedReview}
-              alt="post" />
-            <div className={styles.userDetails}>
-              <Avatar src={this.props.photoURL} />
-              <p className={styles.userDetailsName}>{this.props.name}</p>
-            </div>
-            {
-              this.state.postDescription
-                ? <p className={styles.description}>{this.state.postDescription}</p>
-                : <p className={styles.description}>...</p>
-            }
+
+            <Select
+              mode="tags"
+              style={{ width: '100%' }}
+              placeholder="Select or write your own"
+              onChange={this.handleTagChange}>
+              {this.tags}
+            </Select>
+
             <div className={styles.buttonContainer}>
               <Button
                 size="large"

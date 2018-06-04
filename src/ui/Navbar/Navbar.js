@@ -83,7 +83,7 @@ class Navbar extends Component {
               onClick={this.openPostModal} />
 
             <Modal
-              title="Create New Pin"
+              title="Create New Post"
               visible={this.state.postModalVisible}
               footer={null}
               width={420}
