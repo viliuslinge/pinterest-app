@@ -14,6 +14,12 @@ class Post extends Component {
     postModalVisible: false
   }
 
+  unsubscribe = undefined;
+
+  openSelectedPost = () => {
+    this.props.history.push(`/post/${this.props.data && this.props.data.postId}`);
+  }
+
   openPostModal = () => {
     this.setState({ postModalVisible: true });
   }
@@ -22,9 +28,7 @@ class Post extends Component {
     this.setState({ postModalVisible: false });
   }
 
-  unsubscribe = undefined;
-
-  componentWillMount() {
+  componentDidMount() {
     this.unsubscribe = firebaseService.getProfile(this.props.data.user_uid)
       .onSnapshot(doc => {
         this.setState({ user: doc.data() });
@@ -41,7 +45,7 @@ class Post extends Component {
     }
 
     return (
-      <div className={styles.itemContainer}>
+      <div onClick={this.openSelectedPost} className={styles.itemContainer}>
         <div className={styles.item}>
           <div className={styles.image} style={imageStyle}></div>
           <div className={styles.detailsContainer}>
@@ -76,7 +80,7 @@ class Post extends Component {
                 title="Edit Post"
                 visible={this.state.postModalVisible}
                 footer={null}
-                width={750}
+                width={730}
                 onCancel={this.closePostModal}>
                 {
                   this.state.postModalVisible &&

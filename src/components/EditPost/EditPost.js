@@ -69,7 +69,7 @@ class EditPost extends Component {
             <div id="photo" className={styles.image} style={imageStyle}></div>
           </div>
 
-          <div>
+          <div className={styles.inputContainer}>
             <label className={styles.label} htmlFor="description">Description</label>
             <TextArea
               className={styles.description}

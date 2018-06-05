@@ -4,6 +4,7 @@ import Login from '../../components/Login/Login';
 import Landing from '../Landing/Landing';
 import Home from '../Home/Home';
 import Settings from '../Settings/Settings';
+import PostPage from '../PostPage/PostPage';
 import Navbar from '../../ui/Navbar/Navbar';
 import Profile from '../Profile/Profile';
 import { FirebaseService } from '../../api/FirebaseService';
@@ -16,7 +17,7 @@ const firebaseService = new FirebaseService();
 class Root extends Component {
 
   state = {
-    user: null
+    user: null,
   }
 
   unsubscribe = undefined;
@@ -75,38 +76,40 @@ class Root extends Component {
       <Router>
         <div>
           <Route render={
-            (props) => <Navbar {...props} user={this.state.user}/>
+            (props) => <Navbar {...props} user={this.state.user} />
           }/>
           <Switch>
-            <Route exact path="/" component={Landing}/>
+            <Route exact path="/" component={Landing} />
             <NoAuthRoute
               user={this.state.user}
               exact
               path="/signup"
-              component={Signup}
-            />
+              component={Signup} />
             <NoAuthRoute
               user={this.state.user}
               exact
               path="/login"
-              component={Login}
-            />
+              component={Login} />
             <PrivateRoute
               user={this.state.user}
               exact
               path="/home"
-              component={Home}/>
+              component={Home} />
             <PrivateRoute
               user={this.state.user}
               exact
               path={`/profile/${this.state.user && this.state.user.uid}`}
-              component={Profile}
-            />
+              component={Profile} />
             <PrivateRoute
               user={this.state.user}
               exact
               path="/Settings"
-              component={Settings}/>
+              component={Settings} />
+            <PrivateRoute
+              user={this.state.user}
+              exact
+              path={`/post/:id`}
+              component={PostPage} />
           </Switch>
         </div>
       </Router>

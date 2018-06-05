@@ -8,7 +8,7 @@ const firebaseService = new FirebaseService();
 class Home extends Component {
   
   state = {
-    activePosts: null
+    activePosts: null,
   }
   unsubscribeActivePosts = undefined;
 
@@ -30,7 +30,11 @@ class Home extends Component {
         {
           this.state.activePosts &&
           this.state.activePosts.map(post => {
-            return <Post key={post.postId} data={post} user={this.props.user} />
+            return <Post
+                    {...this.props}
+                    key={post.postId}
+                    data={post}
+                    user={this.props.user} />
           })
         }
       </div>
