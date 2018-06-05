@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Avatar, message, Button, Modal } from 'antd';
+import { Avatar, Button, Modal } from 'antd';
 import styles from './Post.scss';
 import { FirebaseService } from '../../api/FirebaseService';
 import NumberFormatter from '../../utils/number-formatter';
-import EditPost from '../EditPost/EditPost';
+import PostEdit from '../PostEdit/PostEdit';
 
 const firebaseService = new FirebaseService();
 
@@ -87,7 +87,7 @@ class Post extends Component {
                 onCancel={this.closePostModal}>
                 {
                   this.state.postModalVisible &&
-                  <EditPost closeModal={this.closePostModal} post={this.props.data} />
+                  <PostEdit closeModal={this.closePostModal} post={this.props.data} />
                 }
               </Modal>
             </div>

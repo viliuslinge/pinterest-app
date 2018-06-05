@@ -1,22 +1,37 @@
 import React, { Component } from 'react';
+import styles from './PostPage.scss';
+import PostDetails from '../../components/PostDetails/PostDetails';
 import { FirebaseService } from '../../api/FirebaseService';
 
 const firebaseService = new FirebaseService();
 
 class PostPage extends Component {
 
+  state = {
+    currentPost: null,
+    user: null
+  }
+
   currentPostId;
+  unsubscribe;
 
   getCurrentPost = () => {
-    firebaseService.getPost(this.currentPostId).get()
-      .then((doc) => {
+    this.unsubscribePost = firebaseService.getPost(this.currentPostId)
+      .onSnapshot((doc) => {
         if (doc.exists) {
-          console.log(doc.data())
+          this.setState({ currentPost: doc.data() });
+          this.getPostUser();
         } else {
-          console.log("No such document!");
+          console.log("Could not receive selected post!");
         }
-      })
-      .catch((error) => console.log(error))
+      });
+  }
+
+  getPostUser = () => {
+    this.unsubscribeUser = firebaseService.getProfile(this.state.currentPost.user_uid)
+      .onSnapshot(doc => {
+        this.setState({ user: doc.data() });
+      });
   }
 
   componentDidMount() {
@@ -24,11 +39,17 @@ class PostPage extends Component {
     this.getCurrentPost();
   }
 
+  componentWillUnmount() {
+    this.unsubscribePost();
+    this.unsubscribeUser();
+  }
+
   render() {
     return (
-      <div>
+      <div className={styles.container}>
         {
-          this.props.sendCurrentPost && this.props.sendCurrentPost.postId
+          this.state.currentPost && this.state.user &&
+          <PostDetails user={this.state.user} post={this.state.currentPost}/>
         }
       </div>
     )

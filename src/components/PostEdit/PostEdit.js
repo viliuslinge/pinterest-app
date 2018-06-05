@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Input, Button, Select, message, Popconfirm } from 'antd';
-import styles from './EditPost.scss';
+import styles from './PostEdit.scss';
 import { FirebaseService } from '../../api/FirebaseService';
 
 const firebaseService = new FirebaseService();
 const { TextArea } = Input;
 const Option = Select.Option;
 
-class EditPost extends Component {
+class PostEdit extends Component {
 
   state = {
     description: '',
@@ -125,4 +125,4 @@ class EditPost extends Component {
   }
 }
 
-export default EditPost;
+export default PostEdit;
