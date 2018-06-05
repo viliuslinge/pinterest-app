@@ -16,8 +16,10 @@ class Post extends Component {
 
   unsubscribe = undefined;
 
-  openSelectedPost = () => {
-    this.props.history.push(`/post/${this.props.data && this.props.data.postId}`);
+  openSelectedPost = (event) => {
+    if (event.target.id !== 'edit-button' && !this.state.postModalVisible) {
+      this.props.history.push(`/post/${this.props.data && this.props.data.postId}`);
+    }
   }
 
   openPostModal = () => {
@@ -45,8 +47,8 @@ class Post extends Component {
     }
 
     return (
-      <div onClick={this.openSelectedPost} className={styles.itemContainer}>
-        <div className={styles.item}>
+      <div className={styles.itemContainer}>
+        <div className={styles.item} onClick={this.openSelectedPost}>
           <div className={styles.image} style={imageStyle}></div>
           <div className={styles.detailsContainer}>
             {
@@ -70,6 +72,7 @@ class Post extends Component {
               {
                 this.props.user.uid === this.props.data.user_uid &&
                 <Button
+                  id="edit-button"
                   size="large"
                   icon="edit"
                   className={styles.editButton}
