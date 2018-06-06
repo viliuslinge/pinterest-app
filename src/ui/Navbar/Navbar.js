@@ -33,7 +33,7 @@ class Navbar extends Component {
       <Menu>
         <Menu.Item
           key="0"
-          onClick={() => this.props.history.push(`/profile/${this.props.user.uid}`)}>
+          onClick={() => this.props.history.replace(`/profile/${this.props.user.uid}`)}>
           Profile
         </Menu.Item>
         <Menu.Item

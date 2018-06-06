@@ -4,19 +4,56 @@
   background-color: $col-white;
   display: flex;
   margin: 0 auto;
-  width: 1000px;
+  max-width: 1000px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: -40px;
 }
 .detailsContainer {
+  width: 280px;
+  padding-left: 20px;
 }
 .userContainer {
   display: flex;
+  align-items: center;
+  p {
+    margin: 0;
+  }
+  margin-bottom: 20px;
 }
 .imageInvisible {
   display: none;
 }
 .imageVisible {
   display: block;
-  height: 400px;
-  width: auto;
+  height: 100%;
+  width: calc(100% - 280px);
   border-radius: 8px;
+}
+.avatar {
+  margin-right: 10px;
+  cursor: pointer;
+}
+.name {
+  font-weight: 700;
+  cursor: pointer;
+  &:first-of-type {
+    margin-right: 5px;
+  }
+}
+.description {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.date {
+  font-size: 0.7rem;
+}
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+.tag {
+  font-size: 0.8rem;
+  color: $col-link;
+  margin: 0 10px 0 0;
 }

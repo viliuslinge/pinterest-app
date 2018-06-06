@@ -12,10 +12,12 @@ class Profile extends Component {
 
   state = {
     postModalVisible: false,
-    userActivePosts: null
+    userActivePosts: null,
+    user: null
   }
 
-  unsubscribeUserPosts = undefined;
+  unsubscribeUserPosts;
+  unsubscribeUser;
 
   openPostModal = () => {
     this.setState({ postModalVisible: true });
@@ -26,41 +28,56 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    this.unsubscribeUserPosts = firebaseService
-      .subscribeToUserActivePosts(posts => {
-        this.setState({ userActivePosts: posts })},
-        this.props.user.uid
-      )
+    this.unsubscribeUser = firebaseService.getProfile(this.props.match.params.id)
+      .onSnapshot(doc => {
+        this.setState({ user: doc.data() },
+
+        () => {
+          this.unsubscribeUserPosts = firebaseService
+            .subscribeToUserActivePosts(posts => {
+              this.setState({ userActivePosts: posts })},
+              this.state.user.uid
+            )
+          }
+        );
+      });  
   }
 
   componentWillUnmount() {
     this.unsubscribeUserPosts();
+    this.unsubscribeUser();
   }
 
   render() {
     const imageStyle = {
-      backgroundImage: `url(${this.props.user.photoURL})`
+      backgroundImage: this.state.user ? `url(${this.state.user.photoURL})` : 'none'
     }
 
     return (
       <div className={styles.container}>
-        <div className={styles.profileContainer}>
-          <div>
-            <h1 className={styles.name}>
-              {this.props.user.name} {this.props.user.surname}
-            </h1>
-            <p>{this.props.user.email}</p>
-            <p className={styles.about}>{this.props.user.about}</p>
+        {
+          this.state.user &&
+          <div className={styles.profileContainer}>
+            <div>
+              <h1 className={styles.name}>
+                {this.state.user.name} {this.state.user.surname}
+              </h1>
+              <p>{this.state.user.email}</p>
+              <p className={styles.about}>{this.state.user.about}</p>
+            </div>
+            <div className={styles.profilePic} style={imageStyle}></div>
           </div>
-          <div className={styles.profilePic} style={imageStyle}></div>
-        </div>
+        }
 
         <hr className={styles.horizontalRuler} />
 
         <div className={styles.postsContainer}>
-          <div onClick={this.openPostModal}>
-            <CreatePostButton />
-          </div>
+          {
+            this.state.user && this.state.user.uid === this.props.user.uid &&
+            <div onClick={this.openPostModal}>
+              <CreatePostButton />
+            </div>
+          }
           {
             this.state.userActivePosts &&
             this.state.userActivePosts.map(post => {

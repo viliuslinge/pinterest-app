@@ -4,6 +4,7 @@ import styles from './Post.scss';
 import { FirebaseService } from '../../api/FirebaseService';
 import NumberFormatter from '../../utils/number-formatter';
 import PostEdit from '../PostEdit/PostEdit';
+import { Link } from 'react-router-dom';
 
 const firebaseService = new FirebaseService();
 

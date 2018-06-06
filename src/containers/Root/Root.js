@@ -82,33 +82,27 @@ class Root extends Component {
             <Route exact path="/" component={Landing} />
             <NoAuthRoute
               user={this.state.user}
-              exact
               path="/signup"
               component={Signup} />
             <NoAuthRoute
               user={this.state.user}
-              exact
               path="/login"
               component={Login} />
             <PrivateRoute
               user={this.state.user}
-              exact
               path="/home"
               component={Home} />
             <PrivateRoute
               user={this.state.user}
-              exact
-              path={`/profile/${this.state.user && this.state.user.uid}`}
+              path="/profile/:id"
               component={Profile} />
             <PrivateRoute
               user={this.state.user}
-              exact
               path="/Settings"
               component={Settings} />
             <PrivateRoute
               user={this.state.user}
-              exact
-              path={`/post/:id`}
+              path="/post/:id"
               component={PostPage} />
           </Switch>
         </div>

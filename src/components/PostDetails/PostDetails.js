@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './PostDetails.scss';
 import { Avatar } from 'antd';
+import Formatter from '../../utils/number-formatter';
 
 class PostDetails extends Component {
 
@@ -9,12 +10,17 @@ class PostDetails extends Component {
     event.target.previousElementSibling.style.display = 'none'
   }
 
+  requestForRedirect = () => {
+    this.props.handleRedirect(this.props.user.uid)
+  }
+
   render() {
     return (
       <div className={styles.container}>
         <img
           src={this.props.post.thumbnailURL}
           alt=""
+          style={{ filter: 'blur(1px)' }}
           className={styles.imageVisible}/>
         <img
           src={this.props.post.photoURL}
@@ -24,14 +30,31 @@ class PostDetails extends Component {
           
         <div className={styles.detailsContainer}>
           <div className={styles.userContainer}>
-            <Avatar size="large" src={this.props.user.photoURL} />
-            <p>{this.props.user.name}</p>
-            <p>{this.props.user.surname}</p>
+            <Avatar
+              size="large"
+              src={this.props.user.photoURL}
+              className={styles.avatar}
+              onClick={this.requestForRedirect} />
+            <p className={styles.name} onClick={this.requestForRedirect}>
+              {this.props.user.name}
+            </p>
+            <p className={styles.name} onClick={this.requestForRedirect}>
+              {this.props.user.surname}
+            </p>
           </div>
           
-          <p>{this.props.post.description}</p>
-          <p>{this.props.post.created_at}</p>
-          <p>{this.props.post.tags}</p>
+          <p className={styles.description}>{this.props.post.description}</p>
+          <p className={styles.date}>
+            {Formatter.formatMilisecondsToDate(this.props.post.created_at)}
+          </p>
+          <div className={styles.tagContainer}>
+            {
+              this.props.post.tags &&
+              Formatter.formatTags(this.props.post.tags).map(tag => {
+                return <p key={tag} className={styles.tag}>{tag}</p>
+              })
+            }
+          </div>    
         </div>
       </div>
     )

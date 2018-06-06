@@ -12,6 +12,12 @@ export default {
     hours = String(hours).length === 1 ? `0${String(hours)}` : hours;
     const date = `${monthString[month]} ${day} ${year}, ${hours}:${minutes}`;
     return date;
+  },
+
+  formatTags(tags) {
+    return tags.map((tag) => {
+      return tag = `#${tag}`;
+    })
   }
   
 }
