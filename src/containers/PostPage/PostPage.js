@@ -13,7 +13,6 @@ class PostPage extends Component {
     currentPost: null,
     user: null,
     activePosts: null,
-    currentPostId: null
   }
 
   unsubscribePost;
@@ -25,7 +24,7 @@ class PostPage extends Component {
   }
 
   getCurrentPost = () => {
-    this.unsubscribePost = firebaseService.getPost(this.state.currentPostId)
+    this.unsubscribePost = firebaseService.getPost(this.props.match.params.id)
       .onSnapshot((doc) => {
         if (doc.exists) {
           this.setState({ currentPost: doc.data() });
@@ -57,17 +56,9 @@ class PostPage extends Component {
 
   componentDidMount() {
     // this.currentPostId = this.props.match.params.id;
-    this.setState({ currentPostId: this.props.match.params.id }, () => {
-      this.getCurrentPost();
-      this.getAllActivePosts();
-    })
+    this.getCurrentPost(this.props.match.params.id);
+    this.getAllActivePosts();
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   console.log('fdsff')
-  //   this.currentPostId = nextProps.match.params.id;
-  //   this.getCurrentPost();
-  // }
 
   componentWillUnmount() {
     this.unsubscribePost();
@@ -77,13 +68,10 @@ class PostPage extends Component {
     };
   }
 
-  static getDerivedStateFromProps(props, state) {
-    // console.log(props.match.params.id);
-    return props ? { currentPostId: props.match.params.id } : null;
-  }
-
-  componentDidUpdate() {
-    console.log(this.state.currentPostId);
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.id !== prevProps.match.params.id) {
+      this.getCurrentPost()
+    }
   }
 
   render() {
