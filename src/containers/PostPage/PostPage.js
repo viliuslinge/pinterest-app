@@ -12,8 +12,7 @@ class PostPage extends Component {
   state = {
     currentPost: null,
     user: null,
-    activePosts: null,
-    currentPostId: null
+    activePosts: null
   }
 
   unsubscribePost;
@@ -25,11 +24,15 @@ class PostPage extends Component {
   }
 
   getCurrentPost = () => {
-    this.unsubscribePost = firebaseService.getPost(this.state.currentPostId)
+    if (this.unsubscribePost) {
+      this.unsubscribePost();
+    }
+    this.unsubscribePost = firebaseService.getPost(this.props.match.params.id)
       .onSnapshot((doc) => {
         if (doc.exists) {
           this.setState({ currentPost: doc.data() });
           this.getPostUser();
+          this.getAllActivePosts();
         } else {
           console.log("Could not receive selected post!");
         }
@@ -56,35 +59,32 @@ class PostPage extends Component {
   }
 
   componentDidMount() {
-    // this.currentPostId = this.props.match.params.id;
-    this.setState({ currentPostId: this.props.match.params.id }, () => {
-      this.getCurrentPost();
-      this.getAllActivePosts();
-    })
+    this.getCurrentPost();
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   console.log('fdsff')
-  //   this.currentPostId = nextProps.match.params.id;
-  //   this.getCurrentPost();
-  // }
-
   componentWillUnmount() {
-    this.unsubscribePost();
-    this.unsubscribeActivePosts();
+    if (this.unsubscribePost) {
+      this.unsubscribePost();
+    }
+    if (this.unsubscribeActivePosts) {
+      this.unsubscribeActivePosts();
+    }
     if (this.unsubscribeUser) {
       this.unsubscribeUser();
     };
   }
 
-  static getDerivedStateFromProps(props, state) {
-    // console.log(props.match.params.id);
-    return props ? { currentPostId: props.match.params.id } : null;
-  }
-
-  componentDidUpdate() {
-    console.log(this.state.currentPostId);
-  }
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.id !== prevProps.match.params.id) {
+      this.setState({
+        currentPost: null,
+        user: null,
+        activePosts: null
+      }, () => {
+        this.getCurrentPost();
+      });
+    }
+  };
 
   render() {
     return (
@@ -102,18 +102,26 @@ class PostPage extends Component {
                 handleRedirect={this.redirectToUserProfile} />
             </div>
           }
-          </div>
-          <div className={styles.postsContainer}>
+        </div>
+
+        <div className={styles.postsBackground}>
           {
             this.state.currentPost && 
             this.state.activePosts &&
-            this.state.activePosts.map(post => {
-              return <Post
-                      {...this.props}
-                      key={post.postId}
-                      data={post}
-                      user={this.props.user} />
-            })
+            <div>
+              <p className={styles.title}>More like this</p>
+              <div className={styles.postsContainer}>
+                {
+                  this.state.activePosts.map(post => {
+                    return <Post
+                            {...this.props}
+                            key={post.postId}
+                            data={post}
+                            user={this.props.user} />
+                  })
+                }
+              </div>
+            </div>
           }
         </div>
       </div>

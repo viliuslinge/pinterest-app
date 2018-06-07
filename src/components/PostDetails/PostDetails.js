@@ -27,7 +27,7 @@ class PostDetails extends Component {
           alt=""
           className={styles.imageInvisible}
           onLoad={this.handleImageLoading}/>
-          
+
         <div className={styles.detailsContainer}>
           <div className={styles.userContainer}>
             <Avatar
