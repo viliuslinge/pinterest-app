@@ -4,7 +4,6 @@ import styles from './Post.scss';
 import { FirebaseService } from '../../api/FirebaseService';
 import NumberFormatter from '../../utils/number-formatter';
 import PostEdit from '../PostEdit/PostEdit';
-import { Link } from 'react-router-dom';
 
 const firebaseService = new FirebaseService();
 
@@ -47,10 +46,16 @@ class Post extends Component {
       backgroundImage: `url(${this.props.data.thumbnailURL})`
     }
 
+    const imagePosition = {
+      height: `calc(250px / ${this.props.data.ratio} + 80px)`,
+      transform: `translate(${this.props.data.posLeft}px, ${this.props.data.posBottom}px)`,
+    }
+
     return (
-      <div className={styles.itemContainer}>
+      <div className={styles.itemContainer} style={imagePosition}>
         <div className={styles.item} onClick={this.openSelectedPost}>
           <div className={styles.image} style={imageStyle}></div>
+
           <div className={styles.detailsContainer}>
             {
               this.props.data.description
@@ -79,7 +84,7 @@ class Post extends Component {
                   className={styles.editButton}
                   onClick={this.openPostModal} />
               }
-
+          
               <Modal
                 title="Edit Post"
                 visible={this.state.postModalVisible}

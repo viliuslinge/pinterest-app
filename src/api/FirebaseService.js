@@ -99,7 +99,8 @@ export class FirebaseService {
       thumbnailName: '',
       tags: {},
       status: 'draft',
-      user_uid: id
+      user_uid: id,
+      ratio: ''
     })
   }
 
@@ -119,7 +120,8 @@ export class FirebaseService {
       tags: data.tags,
       status: data.status,
       user_uid: data.user_uid,
-      created_at: data.created_at
+      created_at: data.created_at,
+      ratio: data.ratio
     }
   }
 
@@ -223,8 +225,7 @@ export class FirebaseService {
         uploadImage.snapshot.ref.getDownloadURL()
           .then((downloadURL) => {
             if (downloadURL) {
-              upload.url = downloadURL;
-              this.updatePostImage(id, upload.url, imageName);
+              this.getImageRatio(event, id, downloadURL, imageName);
               return;
             } else { console.log('Image not uploaded') }
           })
@@ -256,8 +257,19 @@ export class FirebaseService {
       .catch((err) => { console.log('fail') })
   }
 
-  updatePostImage(id, uploadURL, imageName) {
+  getImageRatio(event, id, downloadURL, imageName) {
+    let img = new Image();
+    let _URL = window.URL || window.webkitURL;
+    img.src = _URL.createObjectURL(event.file.originFileObj);
+    img.onload = (data) => {
+      const imgRatio = (data.path[0].width / data.path[0].height).toFixed(4)
+      this.updatePostImage(id, downloadURL, imageName, imgRatio);
+    }
+  }
+
+  updatePostImage(id, uploadURL, imageName, imgRatio) {
     const postData = {
+      ratio: imgRatio || '',
       photoURL: uploadURL || '',
       imageName: imageName || ''
     }

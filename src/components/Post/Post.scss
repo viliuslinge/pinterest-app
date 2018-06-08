@@ -1,12 +1,13 @@
 .itemContainer {
-  height: 400px;
+  width: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
 }
 .item {
   border: 0 solid #f1f1f1;
-  height: 380px;
+  height: calc(100% - 20px);
   width: calc(100% - 20px);
   border-radius: 1px;
   cursor: zoom-in;
@@ -29,7 +30,7 @@
   }
 }
 .image {
-  height: 305px;
+  height: calc(100% - 75px);
   width: 100%;
   background-size: cover;
   background-position: center;
