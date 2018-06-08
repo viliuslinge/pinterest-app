@@ -11,8 +11,11 @@ class Settings extends Component {
   state = {
     name: '',
     surname: '',
-    about: ''
+    about: '',
+    hasProfilePicChanged: false
   }
+
+  
 
   handleChange = event => {
     const content = event.target.value;
@@ -31,6 +34,7 @@ class Settings extends Component {
       this.deleteImage();
     }
     firebaseService.uploadUserProfileImage(event, this.props.user.uid);
+    this.setState({ hasProfilePicChanged: true })
   }
 
   deleteImage = () => {
@@ -38,7 +42,7 @@ class Settings extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    return props.user ? {
+    return props.user && !state.hasProfilePicChanged ? {
       name: props.user.name,
       surname: props.user.surname,
       about: props.user.about

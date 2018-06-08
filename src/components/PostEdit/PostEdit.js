@@ -11,7 +11,7 @@ class PostEdit extends Component {
 
   state = {
     description: '',
-    selectedTags: []
+    selectedTagsObj: null,
   }
 
   tags = [
@@ -19,8 +19,20 @@ class PostEdit extends Component {
     <Option key={'Science'}>Science</Option>
   ];
 
+  convertObjectToArray = () => {
+    let selectedTagsArr = [];
+    for (let tag in this.state.selectedTagsObj) {
+      selectedTagsArr.push(tag)
+    }
+    return selectedTagsArr
+  }
+
   handleTagChange = (value) => {
-    this.setState({ selectedTags: value });
+    let newTagsObj = {}
+    for (let tag of value) {
+      newTagsObj[tag] = true;
+    };
+    this.setState({ selectedTagsObj: newTagsObj });
   }
 
   handleInputChange = (event) => {
@@ -31,7 +43,7 @@ class PostEdit extends Component {
     firebaseService.getPost(this.props.post.postId)
       .update({ 
         description: this.state.description,
-        tags: this.state.selectedTags
+        tags: this.state.selectedTagsObj
       });
     this.props.closeModal();
     message.success('Your post has been updated!');
@@ -52,10 +64,10 @@ class PostEdit extends Component {
   static getDerivedStateFromProps(props, state) {
     return props.post ? {
       description: props.post.description,
-      selectedTags: props.post.tags
+      selectedTagsObj: props.post.tags
     } : null;
   }
-
+  
   render() {
     const imageStyle = {
       backgroundImage: `url(${this.props.post.thumbnailURL})`
@@ -87,7 +99,7 @@ class PostEdit extends Component {
               mode="tags"
               style={{ width: '100%' }}
               placeholder="Select or write your own"
-              defaultValue={this.state.selectedTags}
+              defaultValue={this.convertObjectToArray()}
               onChange={this.handleTagChange}>
               {this.tags}
             </Select>

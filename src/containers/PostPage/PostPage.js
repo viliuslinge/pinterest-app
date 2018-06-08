@@ -30,27 +30,30 @@ class PostPage extends Component {
     this.unsubscribePost = firebaseService.getPost(this.props.match.params.id)
       .onSnapshot((doc) => {
         if (doc.exists) {
-          this.setState({ currentPost: doc.data() });
-          this.getPostUser();
-          this.getAllActivePosts();
+          this.setState({ currentPost: doc.data() }, () => {
+            this.getPostUser();
+          });
         } else {
           console.log("Could not receive selected post!");
         }
       });
   }
 
-  getAllActivePosts = () => {
+  getAllRelatedPosts = () => {
     this.unsubscribeActivePosts = firebaseService
-      .subscribeToAllActivePosts(posts => {
+      .subscribeToRelatedPosts(posts => {
         this.setState({ activePosts: posts })
-      }
+      },
+      this.state.currentPost.tags
     )
   }
 
   getPostUser = () => {
     this.unsubscribeUser = firebaseService.getProfile(this.state.currentPost.user_uid)
       .onSnapshot(doc => {
-        this.setState({ user: doc.data() });
+        this.setState({ user: doc.data() }, () => {
+          this.getAllRelatedPosts();
+        });
       });
   }
   
@@ -108,16 +111,30 @@ class PostPage extends Component {
           {
             this.state.currentPost && 
             this.state.activePosts &&
+            this.state.activePosts[0] &&
             <div>
               <p className={styles.title}>More like this</p>
               <div className={styles.postsContainer}>
                 {
+                  !this.state.activePosts[0].length &&
                   this.state.activePosts.map(post => {
                     return <Post
                             {...this.props}
                             key={post.postId}
                             data={post}
                             user={this.props.user} />
+                  })
+                }
+                { 
+                  this.state.activePosts[0].length &&
+                  this.state.activePosts.map(arr => {
+                    return arr.map(post => {
+                      return <Post
+                              {...this.props}
+                              key={post.postId}
+                              data={post}
+                              user={this.props.user} />
+                    })
                   })
                 }
               </div>
@@ -130,3 +147,4 @@ class PostPage extends Component {
 }
 
 export default PostPage;
+

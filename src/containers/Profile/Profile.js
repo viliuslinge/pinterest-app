@@ -27,7 +27,7 @@ class Profile extends Component {
     this.setState({ postModalVisible: false });
   }
 
-  componentDidMount() {
+  getUserProfile = () => {
     this.unsubscribeUser = firebaseService.getProfile(this.props.match.params.id)
       .onSnapshot(doc => {
         this.setState({ user: doc.data() },
@@ -40,13 +40,32 @@ class Profile extends Component {
             )
           }
         );
-      });  
+      });
+  }
+
+  componentDidMount() {
+    this.getUserProfile();
   }
 
   componentWillUnmount() {
-    this.unsubscribeUserPosts();
-    this.unsubscribeUser();
+    if (this.unsubscribeUserPosts) {
+      this.unsubscribeUserPosts();
+    }
+    if (this.unsubscribeUser) {
+      this.unsubscribeUser();
+    }
   }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.id !== prevProps.match.params.id) {
+      this.setState({
+        userActivePosts: null,
+        user: null
+      }, () => {
+        this.getUserProfile();
+      });
+    }
+  };
 
   render() {
     const imageStyle = {

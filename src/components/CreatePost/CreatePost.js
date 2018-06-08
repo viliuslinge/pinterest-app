@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { message, Upload, Button, Icon, Tabs, Input, Select } from 'antd';
 import { FirebaseService } from '../../api/FirebaseService';
 import styles from './CreatePost.scss';
+import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 const firebaseService = new FirebaseService();
 const TabPane = Tabs.TabPane;
@@ -24,7 +25,8 @@ class Post extends Component {
     <Option key={'Art'}>Art</Option>,
     <Option key={'Science'}>Science</Option>
   ];
-  selectedTags = [];
+  selectedTagsArr = [];
+  selectedTagsObj = {};
 
   createNewPost = () => {
     firebaseService.createPost(this.props.uid)
@@ -81,14 +83,17 @@ class Post extends Component {
   }
 
   handleTagChange = (value) => {
-    this.selectedTags = value
+    this.selectedTagsArr = value
   }
 
   updateNewPost = () => {
+    for (let tag of this.selectedTagsArr) {
+      this.selectedTagsObj[tag] = true;
+    };
     firebaseService.getPost(this.state.postId)
       .update({ 
         description: this.state.postDescription,
-        tags: this.selectedTags,
+        tags: this.selectedTagsObj,
         status: 'active'
       });
     this.props.closeModal();

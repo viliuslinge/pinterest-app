@@ -14,6 +14,14 @@ class PostDetails extends Component {
     this.props.handleRedirect(this.props.user.uid)
   }
 
+  convertObjectToArray = () => {
+    let tagsArr = [];
+    for (let tag in this.props.post.tags) {
+      tagsArr.push(tag)
+    }
+    return tagsArr
+  }
+
   render() {
     return (
       <div className={styles.container}>
@@ -42,7 +50,6 @@ class PostDetails extends Component {
               {this.props.user.surname}
             </p>
           </div>
-          
           <p className={styles.description}>{this.props.post.description}</p>
           <p className={styles.date}>
             {Formatter.formatMilisecondsToDate(this.props.post.created_at)}
@@ -50,15 +57,15 @@ class PostDetails extends Component {
           <div className={styles.tagContainer}>
             {
               this.props.post.tags &&
-              Formatter.formatTags(this.props.post.tags).map(tag => {
+              Formatter.formatTags(this.convertObjectToArray()).map(tag => {
                 return <p key={tag} className={styles.tag}>{tag}</p>
               })
             }
-          </div>    
+          </div> 
         </div>
       </div>
     )
   }
 }
 
-export default PostDetails;
+export default PostDetails; 
