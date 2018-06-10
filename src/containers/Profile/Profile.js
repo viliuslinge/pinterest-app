@@ -5,6 +5,7 @@ import Post from '../../components/Post/Post';
 import CreatePost from '../../components/CreatePost/CreatePost';
 import { CreatePostButton } from '../../components/CreatePostButton/CreatePostButton';
 import { Modal } from 'antd';
+import GridLayout from '../../utils/grid-layout';
 
 const firebaseService = new FirebaseService();
 
@@ -100,7 +101,12 @@ class Profile extends Component {
           {
             this.state.userActivePosts &&
             this.state.userActivePosts.map(post => {
-              return <Post {...this.props} key={post.postId} data={post} user={this.props.user} />
+              return <Post
+                      {...this.props}
+                      key={post.postId}
+                      data={post}
+                      width={GridLayout.columnWidth}
+                      user={this.props.user} />
             })
           }
         </div>

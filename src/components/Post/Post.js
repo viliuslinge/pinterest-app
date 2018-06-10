@@ -47,15 +47,17 @@ class Post extends Component {
     }
 
     const imagePosition = {
-      height: `calc(250px / ${this.props.data.ratio} + 80px)`,
-      transform: `translate(${this.props.data.posLeft}px, ${this.props.data.posBottom}px)`,
+      height: `calc(${this.props.width}px / ${this.props.data.ratio} + 65px)`,
+      width: `${this.props.width}px`,
+      transform: `translate(${this.props.data.posLeft}px, ${this.props.data.posBottom}px)`
     }
 
     return (
       <div className={styles.itemContainer} style={imagePosition}>
+      {
+        this.state.user &&
         <div className={styles.item} onClick={this.openSelectedPost}>
           <div className={styles.image} style={imageStyle}></div>
-
           <div className={styles.detailsContainer}>
             {
               this.props.data.description
@@ -64,22 +66,21 @@ class Post extends Component {
             }
             <div className={styles.infoContainer}>
               <div>
-                <p className={styles.date}>
-                  {NumberFormatter.formatMilisecondsToDate(this.props.data.created_at)}
-                </p>
-                {
-                  this.state.user && 
-                  <div className={styles.userContainer}>
-                    <Avatar size="small" src={this.state.user.photoURL} />
+                <div className={styles.userContainer}>
+                  <Avatar size="small" src={this.state.user.photoURL} className={styles.avatar}/>
+                  <div>
                     <p className={styles.name}>{this.state.user.name}</p>
+                    <p className={styles.date}>
+                      {NumberFormatter.formatMilisecondsToDate(this.props.data.created_at)}
+                    </p>
                   </div>
-                }
+                </div>
               </div>
               {
                 this.props.user.uid === this.props.data.user_uid &&
                 <Button
                   id="edit-button"
-                  size="large"
+                  // size="large"
                   icon="edit"
                   className={styles.editButton}
                   onClick={this.openPostModal} />
@@ -99,6 +100,7 @@ class Post extends Component {
             </div>
           </div>
         </div>
+      }
       </div>
     )
   }

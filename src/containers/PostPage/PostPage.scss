@@ -10,11 +10,7 @@
   min-height: 30vh;
 }
 .postsContainer {
-	background-size: 100% 150px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  grid-gap: 5px;
-  padding: 20px 40px;
+  margin: 20px auto;
 }
 .title {
   width: 1000px;

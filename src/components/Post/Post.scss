@@ -1,5 +1,4 @@
 .itemContainer {
-  width: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +29,7 @@
   }
 }
 .image {
-  height: calc(100% - 75px);
+  height: calc(100% - 65px);
   width: 100%;
   background-size: cover;
   background-position: center;
@@ -52,17 +51,26 @@
 .userContainer {
   display: flex;
   align-items: center;
+  height: 35px;
+}
+.avatar {
+  margin-right: 5px;
 }
 .name {
-  font-size: 0.8rem;
-  margin: 0 0 0 5px;
+  font-size: 0.75rem;
+  margin: 0;
+  line-height: 0.75rem;
 }
 .date {
   font-size: 0.6rem;
-  margin: 5px 0;
+  line-height: 0.6rem;
+  font-weight: 400;
+  margin: 0;
+  margin-top: 3px;
 }
 .description {
   margin: 0;
+  font-size: 0.85rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

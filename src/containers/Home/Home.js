@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import styles from './Home.scss';
 import Post from '../../components/Post/Post';
 import { FirebaseService } from '../../api/FirebaseService';
+import GridLayout from '../../utils/grid-layout';
 
 const firebaseService = new FirebaseService();
 
 class Home extends Component {
   
   state = {
-    activePosts: null,
-    shouldResetPostsGrid: false
+    activePosts: null
   }
   unsubscribeActivePosts = undefined;
-  grid = []
 
   getActivePosts = () => {
     if (this.unsubscribeActivePosts) {
@@ -20,57 +19,30 @@ class Home extends Component {
     }
     this.unsubscribeActivePosts = firebaseService
       .subscribeToAllActivePosts(posts => {
-        this.setState({ shouldResetPostsGrid: true }, () => {
-          this.grid = [
-            {posLeft: 0, posBottom: 0},
-            {posLeft: 250, posBottom: 0},
-            {posLeft: 500, posBottom: 0},
-            {posLeft: 750, posBottom: 0},
-            {posLeft: 1000, posBottom: 0},
-          ]
-        })
-        
-        this.setState({ activePosts: posts, shouldResetPostsGrid: false }, () => {
-          this.calculatePosition()
-        })
+        this.setState({ activePosts: GridLayout.calcGrid(posts) });
       }
     )
   }
 
-  getIndex = () => {
-    let num = Infinity;
-    let index = 0;
-    for (let i = 0; i < this.grid.length; i++) {
-      if (this.grid[i].posBottom < num) {
-        num = this.grid[i].posBottom;
-        index = i;
-      }
-    }
-    return index;
+  calcGridWidth = () => {
+    const width = Math.floor((window.innerWidth) / GridLayout.columnWidth) * GridLayout.columnWidth;
+    return width !== 0 ? width : GridLayout.columnWidth;
   }
 
-  calculatePosition = () => {
-    const posts = this.state.activePosts
-    let gridIndex = 0;
-    let hasLoopedOneTime = false;
-
-    for (let post of posts) {
-      post.posLeft = this.grid[gridIndex].posLeft;
-      post.posBottom = this.grid[gridIndex].posBottom;
-      post.count = posts.indexOf(post);
-
-      this.grid[gridIndex].posBottom =
-        this.grid[gridIndex].posBottom + Math.round(250 / Number(post.ratio)) + 80;
-
-      if (!hasLoopedOneTime) {
-        gridIndex !== 4 ? gridIndex++ : hasLoopedOneTime = true; 
-      }
-      gridIndex = this.getIndex();
-    }
+  calcMediaQueries = () => {
+    const gridWidth = this.calcGridWidth();
+    let screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
+    const updatePosts = () => {
+      this.setState({ activePosts: GridLayout.calcGrid(this.state.activePosts) });
+      screenEvent.removeListener(updatePosts);
+      this.calcMediaQueries();
+    }   
+    screenEvent.addListener(updatePosts);
   }
 
   componentDidMount() {
     this.getActivePosts();
+    this.calcMediaQueries()
   }
 
   componentWillUnmount() {
@@ -81,15 +53,17 @@ class Home extends Component {
 
   render() {
     return (
-      <div className={styles.postsContainer}>
+      <div
+        className={styles.postsContainer}
+        style={{ width: `${this.calcGridWidth()}px` }}>
         {
-          this.state.shouldResetPostsGrid === false &&
           this.state.activePosts &&
           this.state.activePosts.map(post => {
             return <Post
                     {...this.props}
                     key={post.postId}
                     data={post}
+                    width={GridLayout.columnWidth}
                     user={this.props.user} />
           })
         }

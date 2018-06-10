@@ -4,6 +4,7 @@ import PostDetails from '../../components/PostDetails/PostDetails';
 import { FirebaseService } from '../../api/FirebaseService';
 import { Button, Icon } from 'antd';
 import Post from '../../components/Post/Post';
+import GridLayout from '../../utils/grid-layout';
 
 const firebaseService = new FirebaseService();
 
@@ -119,10 +120,11 @@ class PostPage extends Component {
                   !this.state.activePosts[0].length &&
                   this.state.activePosts.map(post => {
                     return <Post
-                            {...this.props}
-                            key={post.postId}
-                            data={post}
-                            user={this.props.user} />
+                      {...this.props}
+                      key={post.postId}
+                      data={post}
+                      width={GridLayout.columnWidth}
+                      user={this.props.user} />
                   })
                 }
                 { 
@@ -130,10 +132,11 @@ class PostPage extends Component {
                   this.state.activePosts.map(arr => {
                     return arr.map(post => {
                       return <Post
-                              {...this.props}
-                              key={post.postId}
-                              data={post}
-                              user={this.props.user} />
+                        {...this.props}
+                        key={post.postId}
+                        data={post}
+                        width={GridLayout.columnWidth}
+                        user={this.props.user} />
                     })
                   })
                 }
