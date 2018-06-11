@@ -4,7 +4,7 @@ import styles from './Profile.scss';
 import Post from '../../components/Post/Post';
 import CreatePost from '../../components/CreatePost/CreatePost';
 import { CreatePostButton } from '../../components/CreatePostButton/CreatePostButton';
-import { Modal } from 'antd';
+import { Modal, Divider } from 'antd';
 import GridLayout from '../../utils/grid-layout';
 
 const firebaseService = new FirebaseService();
@@ -24,7 +24,7 @@ class Profile extends Component {
     this.setState({ postModalVisible: true });
   }
 
-  closePostModal = (e) => {
+  closePostModal = () => {
     this.setState({ postModalVisible: false });
   }
 
@@ -36,7 +36,8 @@ class Profile extends Component {
         () => {
           this.unsubscribeUserPosts = firebaseService
             .subscribeToUserActivePosts(posts => {
-              this.setState({ userActivePosts: posts })},
+              this.setState({ userActivePosts: GridLayout.calcGrid(posts) })
+            },
               this.state.user.uid
             )
           }
@@ -44,8 +45,25 @@ class Profile extends Component {
       });
   }
 
+  calcGridWidth = () => {
+    const width = Math.floor((window.innerWidth) / GridLayout.columnWidth) * GridLayout.columnWidth;
+    return width !== 0 ? width : GridLayout.columnWidth;
+  }
+
+  calcMediaQueries = () => {
+    const gridWidth = this.calcGridWidth();
+    let screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
+    const updatePosts = () => {
+      this.setState({ userActivePosts: GridLayout.calcGrid(this.state.userActivePosts) });
+      screenEvent.removeListener(updatePosts);
+      this.calcMediaQueries();
+    }   
+    screenEvent.addListener(updatePosts);
+  }
+
   componentDidMount() {
     this.getUserProfile();
+    this.calcMediaQueries()
   }
 
   componentWillUnmount() {
@@ -88,14 +106,20 @@ class Profile extends Component {
             <div className={styles.profilePic} style={imageStyle}></div>
           </div>
         }
-
-        <hr className={styles.horizontalRuler} />
-
-        <div className={styles.postsContainer}>
+        
+        <div
+          className={styles.postsContainer}
+          style={{ width: `${this.calcGridWidth()}px` }}>
           {
             this.state.user && this.state.user.uid === this.props.user.uid &&
             <div onClick={this.openPostModal}>
-              <CreatePostButton />
+              <CreatePostButton width={GridLayout.columnWidth}/>
+            </div>
+          }
+          {
+            this.state.userActivePosts &&
+            <div className={styles.menuContainer}>
+              <Divider>My posts</Divider>
             </div>
           }
           {

@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './CreatePostButton.scss';
-import { Icon } from 'antd';  
+import { Icon } from 'antd';
 
 export const CreatePostButton = (props) => (
   <div>
-    <div className={styles.itemContainer}>
+    <div className={styles.itemContainer} style={{ width: props.width }}>
       <div className={styles.item}>
         <div className={styles.button}>
           <Icon className={styles.icon} type="plus" />
