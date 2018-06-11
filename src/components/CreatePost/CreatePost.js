@@ -121,6 +121,9 @@ class Post extends Component {
   }
 
   render() {
+    const imageStyle = {
+      backgroundImage: `url(${this.state.thumbnailURL})`
+    }
 
     const uploadButton = (
       <div className={styles.imageUpload}>
@@ -148,10 +151,8 @@ class Post extends Component {
               onChange={this.handleImageUpload}>
               {
                 this.state.thumbnailURL
-                  ? <img
-                      src={this.state.thumbnailURL}
-                      className={styles.imageUploaded}
-                      alt="avatar" />
+                  // ? <img src={this.state.thumbnailURL} className={styles.imageUploaded} alt="avatar" />
+                  ? <div id="photo" className={styles.imageUploaded} style={imageStyle}></div>
                   : uploadButton
               }
             </Upload>

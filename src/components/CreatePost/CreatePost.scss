@@ -14,10 +14,21 @@
   margin: 0;
   padding: 0;
 }
-.imageUploaded {
-  width:330px;
-  height: auto;
+
+.imageUploaded  {
+  width: 330px;
+  height: 330px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: $col-black;
+  margin: 0;
+  padding: 0;
+  border-radius: 6px;
 }
+
+
+
 .buttonContainer {
   display: flex;
   justify-content: space-between;
