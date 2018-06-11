@@ -43,7 +43,7 @@ class PostPage extends Component {
   getAllRelatedPosts = () => {
     this.unsubscribeActivePosts = firebaseService
       .subscribeToRelatedPosts(posts => {
-        this.setState({ activePosts: posts })
+        this.setState({ activePosts: GridLayout.calcGrid(posts) })
       },
       this.state.currentPost.tags
     )
@@ -60,6 +60,22 @@ class PostPage extends Component {
   
   redirectToUserProfile = (id) => {
     this.props.history.push(`/profile/${id}`);
+  }
+
+  calcGridWidth = () => {
+    const width = Math.floor((window.innerWidth) / GridLayout.columnWidth) * GridLayout.columnWidth;
+    return width !== 0 ? width : GridLayout.columnWidth;
+  }
+
+  calcMediaQueries = () => {
+    const gridWidth = this.calcGridWidth();
+    let screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
+    const updatePosts = () => {
+      this.setState({ activePosts: GridLayout.calcGrid(this.state.activePosts) });
+      screenEvent.removeListener(updatePosts);
+      this.calcMediaQueries();
+    }   
+    screenEvent.addListener(updatePosts);
   }
 
   componentDidMount() {
@@ -115,7 +131,9 @@ class PostPage extends Component {
             this.state.activePosts[0] &&
             <div>
               <p className={styles.title}>More like this</p>
-              <div className={styles.postsContainer}>
+              <div
+                className={styles.postsContainer}
+                style={{ width: `${this.calcGridWidth()}px` }}>
                 {
                   !this.state.activePosts[0].length &&
                   this.state.activePosts.map(post => {
