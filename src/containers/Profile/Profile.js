@@ -112,8 +112,8 @@ class Profile extends Component {
           style={{ width: `${this.calcGridWidth()}px` }}>
           {
             this.state.user && this.state.user.uid === this.props.user.uid &&
-            <div onClick={this.openPostModal}>
-              <CreatePostButton width={GridLayout.columnWidth}/>
+            <div onClick={this.openPostModal} style={{ width: `${GridLayout.columnWidth}px` }}>
+              <CreatePostButton />
             </div>
           }
           {

@@ -151,7 +151,6 @@ class Post extends Component {
               onChange={this.handleImageUpload}>
               {
                 this.state.thumbnailURL
-                  // ? <img src={this.state.thumbnailURL} className={styles.imageUploaded} alt="avatar" />
                   ? <div id="photo" className={styles.imageUploaded} style={imageStyle}></div>
                   : uploadButton
               }

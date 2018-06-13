@@ -1,0 +1,40 @@
+USE THIS POST OBJECT FOR INDEXING
+
+{
+	"mappings":{
+		"post":{
+			"properties":{
+				"created_at":{
+					"type": "long"
+				},
+			    "description":{
+			    	"type": "text"
+			    },
+			    "imageName":{
+			    	"type": "long"
+			    },
+			    "photoURL":{
+			    	"type": "text"
+			    },
+			    "ratio":{
+			    	"type": "text"
+			    },
+			    "status":{
+			    	"type": "text"
+			    },
+			    "tags":{
+			    	"type": "object"
+			    },
+			    "thumbnailName":{
+			    	"type": "long"
+			    },
+			    "thumbnailURL":{
+			    	"type": "text"
+			    },
+			    "user_uid":{
+			    	"type": "text"
+			    }
+			}
+		}
+	}
+}

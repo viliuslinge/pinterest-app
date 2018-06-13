@@ -16,20 +16,16 @@ class PostPage extends Component {
     activePosts: null
   }
 
-  unsubscribePost;
   unsubscribeUser;
   unsubscribeActivePosts;
   
   returnPreviousPage = () => {
-    this.props.history.goBack();
+    this.props.history.push('/home');
   }
 
   getCurrentPost = () => {
-    if (this.unsubscribePost) {
-      this.unsubscribePost();
-    }
-    this.unsubscribePost = firebaseService.getPost(this.props.match.params.id)
-      .onSnapshot((doc) => {
+    firebaseService.getPost(this.props.match.params.id)
+      .get().then((doc) => {
         if (doc.exists) {
           this.setState({ currentPost: doc.data() }, () => {
             this.getPostUser();
@@ -37,7 +33,7 @@ class PostPage extends Component {
         } else {
           console.log("Could not receive selected post!");
         }
-      });
+      })
   }
 
   getAllRelatedPosts = () => {
@@ -78,14 +74,30 @@ class PostPage extends Component {
     screenEvent.addListener(updatePosts);
   }
 
+  testFetch = () => {
+    const url ='http://35.192.18.49//elasticsearch/posts/post/_search?q=description:dog'
+    const object = {
+      method: 'GET',
+      credentials: 'include',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic dXNlcjppRmpEcDNmNUdidnk='
+      }),
+    }
+    fetch(url, object)
+    .then(result => {
+      return result.json();
+    }).then(data => {
+      return console.log(data)
+    })
+  }
+
   componentDidMount() {
     this.getCurrentPost();
+    this.testFetch();
   }
 
   componentWillUnmount() {
-    if (this.unsubscribePost) {
-      this.unsubscribePost();
-    }
     if (this.unsubscribeActivePosts) {
       this.unsubscribeActivePosts();
     }
@@ -135,7 +147,7 @@ class PostPage extends Component {
                 className={styles.postsContainer}
                 style={{ width: `${this.calcGridWidth()}px` }}>
                 {
-                  !this.state.activePosts[0].length &&
+                  this.state.activePosts &&
                   this.state.activePosts.map(post => {
                     return <Post
                       {...this.props}
@@ -143,19 +155,6 @@ class PostPage extends Component {
                       data={post}
                       width={GridLayout.columnWidth}
                       user={this.props.user} />
-                  })
-                }
-                { 
-                  this.state.activePosts[0].length &&
-                  this.state.activePosts.map(arr => {
-                    return arr.map(post => {
-                      return <Post
-                        {...this.props}
-                        key={post.postId}
-                        data={post}
-                        width={GridLayout.columnWidth}
-                        user={this.props.user} />
-                    })
                   })
                 }
               </div>
@@ -169,3 +168,27 @@ class PostPage extends Component {
 
 export default PostPage;
 
+/* {
+  !this.state.activePosts[0].length &&
+  this.state.activePosts.map(post => {
+    return <Post
+      {...this.props}
+      key={post.postId}
+      data={post}
+      width={GridLayout.columnWidth}
+      user={this.props.user} />
+  })
+}
+{ 
+  this.state.activePosts[0].length &&
+  this.state.activePosts.map(arr => {
+    return arr.map(post => {
+      return <Post
+        {...this.props}
+        key={post.postId}
+        data={post}
+        width={GridLayout.columnWidth}
+        user={this.props.user} />
+    })
+  })
+} */

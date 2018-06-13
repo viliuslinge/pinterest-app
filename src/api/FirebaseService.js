@@ -138,43 +138,44 @@ export class FirebaseService {
   }
 
   subscribeToRelatedPosts(callbackFunction, tags) {
-/*     let tagsArr = [];
+    // let allPosts = []
+
+
+    // for (let tag in tags) {
+    //   db.collection('posts')
+    //     .where(`tags.${tag}`, '==', true)
+    //     .onSnapshot(snapshot => {
+    //       snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)));
+    //       callbackFunction(allPosts);
+    //     })
+    // }
+
+/*     let tagsArr = []
     for (let tag in tags) {
-      tagsArr.push(tag)
+      tagsArr.push(tag);
     }
-    if (tagsArr.length === 1) {
-      return db.collection('posts')
-        .where(`tags.${tagsArr[0]}`, '==', true)
+    for (let i = 0; i < tagsArr.length; i++) {
+      db.collection('posts')
+        .where(`tags.${tagsArr[i]}`, '==', true)
         .onSnapshot(snapshot => {
-          const allPosts = []
-          snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
+          if (i === 0) {
+            allPosts = []
+          }
+          snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)));
           callbackFunction(allPosts);
-        }
-      );
-    } else 
-    if (tagsArr.length > 1) {
-        const arrOfFilteredTags = [];
-        for (let tag of tagsArr) {
-          db.collection('posts')
-            .where(`tags.${tag}`, '==', true)
-            .onSnapshot(snapshot => {
-              const allPosts = []
-              snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
-              console.log(allPosts)
-              arrOfFilteredTags.push(allPosts)
-              callbackFunction(arrOfFilteredTags)
-            })
-        }
+        })
     } */
-    return db.collection('posts')
-      // .where(`tags.${tagsArr[0]}`, '==', true)
-      .where('status', '==', 'active')
-      .onSnapshot(snapshot => {
-        const allPosts = []
-        snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
-        callbackFunction(allPosts);
-      }
-    );
+
+    // return db.collection('posts')
+    //   // .where(`tags.${tagsArr[0]}`, '==', true)
+    //   .where('status', '==', 'active')
+    //   .onSnapshot(snapshot => {
+    //     const allPosts = []
+    //     snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
+    //     callbackFunction(allPosts);
+    //   }
+    // );
+
   }
 
   subscribeToUserActivePosts(callbackFunction, user_uid) {

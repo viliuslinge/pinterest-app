@@ -22,7 +22,6 @@ export default {
     for (let post of posts) {
       post.posLeft = grid[gridIndex].posLeft;
       post.posBottom = grid[gridIndex].posBottom;
-      post.count = posts.indexOf(post);
 
       grid[gridIndex].posBottom =
         grid[gridIndex].posBottom +
