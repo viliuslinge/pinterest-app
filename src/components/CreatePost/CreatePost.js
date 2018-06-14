@@ -91,7 +91,8 @@ class Post extends Component {
       this.selectedTagsObj[tag] = true;
     };
     firebaseService.getPost(this.state.postId)
-      .update({ 
+      .update({
+        postId: this.state.postId,
         description: this.state.postDescription,
         tags: this.selectedTagsObj,
         status: 'active'

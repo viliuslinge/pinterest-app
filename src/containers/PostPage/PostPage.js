@@ -5,6 +5,7 @@ import { FirebaseService } from '../../api/FirebaseService';
 import { Button, Icon } from 'antd';
 import Post from '../../components/Post/Post';
 import GridLayout from '../../utils/grid-layout';
+import { functions } from '../../firebase';
 
 const firebaseService = new FirebaseService();
 
@@ -36,20 +37,21 @@ class PostPage extends Component {
       })
   }
 
-  getAllRelatedPosts = () => {
-    this.unsubscribeActivePosts = firebaseService
-      .subscribeToRelatedPosts(posts => {
-        this.setState({ activePosts: GridLayout.calcGrid(posts) })
-      },
-      this.state.currentPost.tags
-    )
-  }
+  // getAllRelatedPosts = () => {
+  //   this.unsubscribeActivePosts = firebaseService
+  //     .subscribeToRelatedPosts(posts => {
+  //       this.setState({ activePosts: GridLayout.calcGrid(posts) })
+  //     },
+  //     this.state.currentPost.tags
+  //   )
+  // }
 
   getPostUser = () => {
     this.unsubscribeUser = firebaseService.getProfile(this.state.currentPost.user_uid)
       .onSnapshot(doc => {
         this.setState({ user: doc.data() }, () => {
-          this.getAllRelatedPosts();
+          // this.getAllRelatedPosts();
+          this.getRelatedPosts()
         });
       });
   }
@@ -74,27 +76,24 @@ class PostPage extends Component {
     screenEvent.addListener(updatePosts);
   }
 
-  testFetch = () => {
-    const url ='http://35.192.18.49//elasticsearch/posts/post/_search?q=description:dog'
-    const object = {
-      method: 'GET',
-      credentials: 'include',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic dXNlcjppRmpEcDNmNUdidnk='
-      }),
+  getRelatedPosts = () => {
+    const tagsArr = [];
+    for (let tag in this.state.currentPost.tags) {
+      tagsArr.push(tag)
     }
-    fetch(url, object)
-    .then(result => {
-      return result.json();
-    }).then(data => {
-      return console.log(data)
-    })
-  }
+    functions.httpsCallable('getRelatedPosts')(tagsArr)
+      .then(result => {
+        const resultArr = JSON.parse(result.data).hits.hits;
+        let relatedPostsArr = [];
+        for (let result of resultArr) {
+          relatedPostsArr.push(result._source);
+        };
+        this.setState({ activePosts: GridLayout.calcGrid(relatedPostsArr) })
+      })
+  } 
 
   componentDidMount() {
     this.getCurrentPost();
-    this.testFetch();
   }
 
   componentWillUnmount() {
@@ -167,28 +166,3 @@ class PostPage extends Component {
 }
 
 export default PostPage;
-
-/* {
-  !this.state.activePosts[0].length &&
-  this.state.activePosts.map(post => {
-    return <Post
-      {...this.props}
-      key={post.postId}
-      data={post}
-      width={GridLayout.columnWidth}
-      user={this.props.user} />
-  })
-}
-{ 
-  this.state.activePosts[0].length &&
-  this.state.activePosts.map(arr => {
-    return arr.map(post => {
-      return <Post
-        {...this.props}
-        key={post.postId}
-        data={post}
-        width={GridLayout.columnWidth}
-        user={this.props.user} />
-    })
-  })
-} */

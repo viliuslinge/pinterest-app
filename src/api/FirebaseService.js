@@ -137,46 +137,24 @@ export class FirebaseService {
     );
   }
 
-  subscribeToRelatedPosts(callbackFunction, tags) {
-    // let allPosts = []
-
-
-    // for (let tag in tags) {
-    //   db.collection('posts')
-    //     .where(`tags.${tag}`, '==', true)
-    //     .onSnapshot(snapshot => {
-    //       snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)));
-    //       callbackFunction(allPosts);
-    //     })
-    // }
-
-/*     let tagsArr = []
-    for (let tag in tags) {
-      tagsArr.push(tag);
-    }
-    for (let i = 0; i < tagsArr.length; i++) {
-      db.collection('posts')
-        .where(`tags.${tagsArr[i]}`, '==', true)
-        .onSnapshot(snapshot => {
-          if (i === 0) {
-            allPosts = []
-          }
-          snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)));
-          callbackFunction(allPosts);
-        })
-    } */
-
-    // return db.collection('posts')
-    //   // .where(`tags.${tagsArr[0]}`, '==', true)
-    //   .where('status', '==', 'active')
-    //   .onSnapshot(snapshot => {
-    //     const allPosts = []
-    //     snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
-    //     callbackFunction(allPosts);
-    //   }
-    // );
-
-  }
+  // subscribeToRelatedPosts(callbackFunction, tags) {
+  //   let allPosts = []
+  //   let tagsArr = []
+  //   for (let tag in tags) {
+  //     tagsArr.push(tag);
+  //   }
+  //   for (let i = 0; i < tagsArr.length; i++) {
+  //     db.collection('posts')
+  //       .where(`tags.${tagsArr[i]}`, '==', true)
+  //       .onSnapshot(snapshot => {
+  //         if (i === 0) {
+  //           allPosts = []
+  //         }
+  //         snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)));
+  //         callbackFunction(allPosts);
+  //       })
+  //   }
+  // }
 
   subscribeToUserActivePosts(callbackFunction, user_uid) {
     return db.collection('posts')
