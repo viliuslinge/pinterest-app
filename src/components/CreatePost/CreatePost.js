@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { message, Upload, Button, Icon, Tabs, Input, Select } from 'antd';
 import { FirebaseService } from '../../api/FirebaseService';
 import styles from './CreatePost.scss';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 const firebaseService = new FirebaseService();
 const TabPane = Tabs.TabPane;
@@ -17,7 +16,8 @@ class Post extends Component {
     thumbnailURL: null,
     postDescription: '',
     activeTabKey: '1',
-    loading: false
+    loading: false,
+    tagValidation: ''
   }
 
   unsubscribe = undefined;
@@ -26,7 +26,6 @@ class Post extends Component {
     <Option key={'Science'}>Science</Option>
   ];
   selectedTagsArr = [];
-  selectedTagsObj = {};
 
   createNewPost = () => {
     firebaseService.createPost(this.props.uid)
@@ -83,18 +82,21 @@ class Post extends Component {
   }
 
   handleTagChange = (value) => {
+    if (this.state.tagValidation) {
+      this.setState({ tagValidation: '' })
+    }
     this.selectedTagsArr = value
   }
 
   updateNewPost = () => {
-    for (let tag of this.selectedTagsArr) {
-      this.selectedTagsObj[tag] = true;
-    };
+    if (this.selectedTagsArr.length === 0) {
+      return this.setState({ tagValidation: 'Please add at least one tag' });
+    }
     firebaseService.getPost(this.state.postId)
       .update({
         postId: this.state.postId,
         description: this.state.postDescription,
-        tags: this.selectedTagsObj,
+        tags: this.selectedTagsArr,
         status: 'active'
       });
     this.props.closeModal();
@@ -210,6 +212,10 @@ class Post extends Component {
               onChange={this.handleTagChange}>
               {this.tags}
             </Select>
+            { 
+              this.state.tagValidation &&
+              <p className={styles.validation}>{this.state.tagValidation}</p>
+            }
 
             <div className={styles.buttonContainer}>
               <Button

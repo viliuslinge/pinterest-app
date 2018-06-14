@@ -97,7 +97,7 @@ export class FirebaseService {
       imageName: '',
       thumbnailURL: '',
       thumbnailName: '',
-      tags: {},
+      tags: [],
       status: 'draft',
       user_uid: id,
       ratio: ''
@@ -139,13 +139,10 @@ export class FirebaseService {
 
   // subscribeToRelatedPosts(callbackFunction, tags) {
   //   let allPosts = []
-  //   let tagsArr = []
-  //   for (let tag in tags) {
-  //     tagsArr.push(tag);
-  //   }
-  //   for (let i = 0; i < tagsArr.length; i++) {
+
+  //   for (let i = 0; i < tags.length; i++) {
   //     db.collection('posts')
-  //       .where(`tags.${tagsArr[i]}`, '==', true)
+  //       .where(`tags.${tags[i]}`, '==', true)
   //       .onSnapshot(snapshot => {
   //         if (i === 0) {
   //           allPosts = []

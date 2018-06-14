@@ -77,11 +77,7 @@ class PostPage extends Component {
   }
 
   getRelatedPosts = () => {
-    const tagsArr = [];
-    for (let tag in this.state.currentPost.tags) {
-      tagsArr.push(tag)
-    }
-    functions.httpsCallable('getRelatedPosts')(tagsArr)
+    functions.httpsCallable('getRelatedPosts')(this.state.currentPost.tags)
       .then(result => {
         const resultArr = JSON.parse(result.data).hits.hits;
         let relatedPostsArr = [];

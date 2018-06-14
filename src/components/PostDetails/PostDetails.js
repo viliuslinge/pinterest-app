@@ -14,14 +14,6 @@ class PostDetails extends Component {
     this.props.handleRedirect(this.props.user.uid)
   }
 
-  convertObjectToArray = () => {
-    let tagsArr = [];
-    for (let tag in this.props.post.tags) {
-      tagsArr.push(tag)
-    }
-    return tagsArr
-  }
-
   render() {
     return (
       <div className={styles.container}>
@@ -57,7 +49,7 @@ class PostDetails extends Component {
           <div className={styles.tagContainer}>
             {
               this.props.post.tags &&
-              Formatter.formatTags(this.convertObjectToArray()).map(tag => {
+              Formatter.formatTags(this.props.post.tags).map(tag => {
                 return <p key={tag} className={styles.tag}>{tag}</p>
               })
             }

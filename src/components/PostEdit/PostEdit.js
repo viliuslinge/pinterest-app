@@ -11,7 +11,8 @@ class PostEdit extends Component {
 
   state = {
     description: '',
-    selectedTagsObj: null,
+    selectedTagsArr: null,
+    tagValidation: ''
   }
 
   tags = [
@@ -19,20 +20,11 @@ class PostEdit extends Component {
     <Option key={'Science'}>Science</Option>
   ];
 
-  convertObjectToArray = () => {
-    let selectedTagsArr = [];
-    for (let tag in this.state.selectedTagsObj) {
-      selectedTagsArr.push(tag)
-    }
-    return selectedTagsArr
-  }
-
   handleTagChange = (value) => {
-    let newTagsObj = {}
-    for (let tag of value) {
-      newTagsObj[tag] = true;
-    };
-    this.setState({ selectedTagsObj: newTagsObj });
+    if (this.state.tagValidation) {
+      this.setState({ tagValidation: '' })
+    }
+    this.setState({ selectedTagsArr: value });
   }
 
   handleInputChange = (event) => {
@@ -40,10 +32,13 @@ class PostEdit extends Component {
   }
 
   updatePost = () => {
+    if (this.state.selectedTagsArr.length === 0) {
+      return this.setState({ tagValidation: 'Please add at least one tag' });
+    }
     firebaseService.getPost(this.props.post.postId)
       .update({ 
         description: this.state.description,
-        tags: this.state.selectedTagsObj
+        tags: this.state.selectedTagsArr
       });
     this.props.closeModal();
     message.success('Your post has been updated!');
@@ -64,7 +59,7 @@ class PostEdit extends Component {
   static getDerivedStateFromProps(props, state) {
     return props.post ? {
       description: props.post.description,
-      selectedTagsObj: props.post.tags
+      selectedTagsArr: props.post.tags
     } : null;
   }
   
@@ -99,10 +94,14 @@ class PostEdit extends Component {
               mode="tags"
               style={{ width: '100%' }}
               placeholder="Select or write your own"
-              defaultValue={this.convertObjectToArray()}
+              defaultValue={this.state.selectedTagsArr}
               onChange={this.handleTagChange}>
               {this.tags}
             </Select>
+            { 
+              this.state.tagValidation &&
+              <p className={styles.validation}>{this.state.tagValidation}</p>
+            }
           </div>
         </div>
 

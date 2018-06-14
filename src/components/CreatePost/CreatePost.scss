@@ -26,9 +26,6 @@
   padding: 0;
   border-radius: 6px;
 }
-
-
-
 .buttonContainer {
   display: flex;
   justify-content: space-between;
@@ -43,4 +40,9 @@
   padding: 10px 0 20px 0;
   color: $col-grey-2;
   margin: 0;
+}
+.validation {
+  font-size: 0.75rem;
+  margin: 3px 0;
+  color: $col-danger;
 }

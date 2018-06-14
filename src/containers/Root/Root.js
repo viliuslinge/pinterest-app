@@ -48,14 +48,14 @@ class Root extends Component {
       if (data) {
         this.unsubscribe = firebaseService.getProfile(data.uid)
           .onSnapshot( (user) => {
-              if (user.exists) {
-                this.setState({ user: user.data() })
-              } else {
-                console.log("No such document!")
-              }}, (error) => {
-                console.log(error);
-              }
-            )
+            if (user.exists) {
+              this.setState({ user: user.data() })
+            } else {
+              console.log("No such document!")
+            }}, (error) => {
+              console.log(error);
+            }
+          )
       } else {
         this.unsubscribe && this.unsubscribe()
         this.setState({ user: null });

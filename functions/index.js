@@ -39,7 +39,7 @@ exports.getRelatedPosts = functions.https.onCall((data, context) => {
   let queryURL = 'http://35.192.18.49//elasticsearch/posts/post/_search?q='
 
   for (let i = 0; i < searchTags.length; i++) {
-    queryURL += `tags.${searchTags[i]}:true`
+    queryURL += `tags:*${searchTags[i]}*`
     if (i !== searchTags.length - 1) {
       queryURL += '+'
     }
