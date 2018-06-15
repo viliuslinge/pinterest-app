@@ -77,11 +77,12 @@ class Post extends Component {
                 </div>
               </div>
               {
+                (/^\/profile\//).test(this.props.match.path) &&
                 this.props.user.uid === this.props.data.user_uid &&
                 <Button
                   id="edit-button"
-                  // size="large"
                   icon="edit"
+                  type="primary"
                   className={styles.editButton}
                   onClick={this.openPostModal} />
               }

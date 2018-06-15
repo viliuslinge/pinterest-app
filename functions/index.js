@@ -23,12 +23,13 @@ exports.indexPostsToElastic = functions.firestore
       body: document,
       json: true
     }
+
     if (document && document.status === 'draft') {
       return null;
     } else {
       return request(elasticSearchRequest)
-      .then(response => {
-        return console.log('ElasticSearch response:', response);
+        .then(response => {
+          return console.log('ElasticSearch response:', response);
       })
       .catch(err => console.log(err))
     }
@@ -54,9 +55,9 @@ exports.getRelatedPosts = functions.https.onCall((data, context) => {
       password: elasticSearchConfig.password
     }
   }
+  
   return request(elasticSearchRequest)
   .then(response => {
-    console.log('Response received');
     return response
   })
   .catch(err => console.log(err))

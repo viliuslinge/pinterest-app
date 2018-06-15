@@ -17,8 +17,9 @@ class Profile extends Component {
     user: null
   }
 
-  unsubscribeUserPosts;
-  unsubscribeUser;
+  unsubscribeUserPosts = undefined;
+  unsubscribeUser = undefined;
+  screenEvent;
 
   openPostModal = () => {
     this.setState({ postModalVisible: true });
@@ -29,11 +30,16 @@ class Profile extends Component {
   }
 
   getUserProfile = () => {
+    if (this.unsubscribeUser) {
+      this.unsubscribeUser();
+    }
     this.unsubscribeUser = firebaseService.getProfile(this.props.match.params.id)
       .onSnapshot(doc => {
         this.setState({ user: doc.data() },
-
         () => {
+          if (this.unsubscribeUserPosts) {
+            this.unsubscribeUserPosts();
+          }
           this.unsubscribeUserPosts = firebaseService
             .subscribeToUserActivePosts(posts => {
               this.setState({ userActivePosts: GridLayout.calcGrid(posts) })
@@ -52,13 +58,14 @@ class Profile extends Component {
 
   calcMediaQueries = () => {
     const gridWidth = this.calcGridWidth();
-    let screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
-    const updatePosts = () => {
-      this.setState({ userActivePosts: GridLayout.calcGrid(this.state.userActivePosts) });
-      screenEvent.removeListener(updatePosts);
-      this.calcMediaQueries();
-    }   
-    screenEvent.addListener(updatePosts);
+    this.screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
+    this.screenEvent.addListener(this.updatePosts);
+  }
+
+  updatePosts = () => {
+    this.setState({ userActivePosts: GridLayout.calcGrid(this.state.userActivePosts) });
+    this.screenEvent.removeListener(this.updatePosts);
+    this.calcMediaQueries();
   }
 
   componentDidMount() {
@@ -67,6 +74,9 @@ class Profile extends Component {
   }
 
   componentWillUnmount() {
+    if (this.screenEvent) {
+      this.screenEvent.removeListener(this.updatePosts);
+    }
     if (this.unsubscribeUserPosts) {
       this.unsubscribeUserPosts();
     }

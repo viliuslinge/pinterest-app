@@ -87,25 +87,114 @@ export class FirebaseService {
       )
   }
 
+  // TAG SERVICES
+
+  getTagList() {
+    return db.doc(`tags/tagList`)
+  }
+
+  updateTagList(selectedTagsArr) {
+    this.getTagList().get().then(data => {
+      let newList = new Set(data.data().tags);
+      for (let tag of selectedTagsArr) {
+        newList.add(tag);
+      }
+      this.getTagList().set({tags: Array.from(newList)}, {merge: true});
+    });
+  }
+
   // POST SERVICES
 
-  createPost(id) {
-    return db.collection('posts').add({
-      created_at: new Date().getTime(),
-      description: '',
-      photoURL: '',
-      imageName: '',
-      thumbnailURL: '',
-      thumbnailName: '',
-      tags: [],
-      status: 'draft',
-      user_uid: id,
-      ratio: ''
-    })
+  generateRandomId() {
+    const randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    return randLetter + new Date().getTime();
   }
 
   getPost(id) {
     return db.doc(`posts/${id}`);
+  }
+
+  createPost(id, postDetails, event) {
+    let upload = event.file.originFileObj;
+    if (!upload) { return console.log('No files found') };
+    let post = {
+      postId: this.generateRandomId(),
+      created_at: new Date().getTime(),
+      description: postDetails.description,
+      tags: postDetails.tags,
+      status: postDetails.status,
+      user_uid: id,
+      photoURL: '',
+      imageName: this.generateRandomId(),
+      thumbnailURL: '',
+      thumbnailName: this.generateRandomId(),
+      ratio: ''
+    }
+    return new Promise(resolve => {
+      this.calcImageRatio(post, upload, resolve)
+    });
+  }
+
+  calcImageRatio(post, upload, resolve) {
+    let img = new Image();
+    let _URL = window.URL || window.webkitURL;
+    img.src = _URL.createObjectURL(upload);
+    img.onload = (data) => {
+      post.ratio = (data.path[0].width / data.path[0].height).toFixed(4);
+      this.uploadImage(post, upload, resolve);
+    }
+  }
+
+  uploadImage(post, upload, resolve) {
+    const uploadImage = storage.ref().child(`posts/${post.imageName}`).put(upload);
+      uploadImage.on(
+        'state_changed',
+        snapshot => {},
+        error => { console.log(error) },
+        () => { uploadImage.snapshot.ref.getDownloadURL()
+          .then(downloadURL => {
+            post.photoURL = downloadURL;
+            this.uploadThumbnail(post, upload, resolve);
+          })
+          .catch(err => console.log(err));
+        }
+      )
+  }
+
+  uploadThumbnail(post, upload, resolve) {
+    imgCompressor.compressImage(upload)
+      .then(compressedImage => {
+        const uploadThumbnail = storage.ref().child(`thumbnails/${post.thumbnailName}`).put(compressedImage)
+        uploadThumbnail.on(
+          'state_changed',
+          (snapshot) => {},
+          (error) => { console.log(error) },
+          () => { uploadThumbnail.snapshot.ref.getDownloadURL()
+            .then(downloadURL => {
+              post.thumbnailURL = downloadURL;
+              resolve(this.sendPostToFirebase(post))
+            })
+            .catch(err => console.log(err));
+          }
+        )
+      })
+      .catch((err) => { console.log('fail') })
+  }
+
+  sendPostToFirebase(post) {
+    return db.collection('posts').doc(post.postId).set(post);
+  }
+
+  deleteImage(fileName) {
+    return storage.ref().child(`posts/${fileName}`).delete();
+  }
+
+  deleteThumbnail(fileName) {
+    return storage.ref().child(`thumbnails/${fileName}`).delete();
+  }
+
+  deletePost(id) {
+    return this.getPost(id).delete();
   }
 
   createPostFromDoc(doc) {
@@ -137,22 +226,6 @@ export class FirebaseService {
     );
   }
 
-  // subscribeToRelatedPosts(callbackFunction, tags) {
-  //   let allPosts = []
-
-  //   for (let i = 0; i < tags.length; i++) {
-  //     db.collection('posts')
-  //       .where(`tags.${tags[i]}`, '==', true)
-  //       .onSnapshot(snapshot => {
-  //         if (i === 0) {
-  //           allPosts = []
-  //         }
-  //         snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)));
-  //         callbackFunction(allPosts);
-  //       })
-  //   }
-  // }
-
   subscribeToUserActivePosts(callbackFunction, user_uid) {
     return db.collection('posts')
       .where('status', '==', 'active')
@@ -164,111 +237,5 @@ export class FirebaseService {
         callbackFunction(allPosts);
       }
     );
-  }
-
-  // getUserActivePosts(user_uid) {
-  //   return db.collection('posts')
-  //     .where('status', '==', 'active')
-  //     .where('user_uid', '==', user_uid)
-  //     .orderBy('created_at', 'desc')
-  //     .get()
-  //     .then((snapshot) => {
-  //       const allPosts = []
-  //       snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
-  //       return allPosts
-  //     })
-  //     .catch(() => [])
-  // }
-
-  uploadPostImage(event, id) {
-    let upload = event.file.originFileObj;
-    let uploadThumb;
-
-    if (!upload) {
-      console.log('No files found');
-      return;
-    }
-
-    const storageRef = storage.ref()
-    const imageName = new Date().getTime();
-    const uploadImage = storageRef.child(`posts/${imageName}`).put(upload);
-
-    uploadImage.on(
-      'state_changed',
-      (snapshot) => {},
-      (error) => { console.log(error) },
-      () => {
-        uploadImage.snapshot.ref.getDownloadURL()
-          .then((downloadURL) => {
-            if (downloadURL) {
-              this.getImageRatio(event, id, downloadURL, imageName);
-              return;
-            } else { console.log('Image not uploaded') }
-          })
-      }
-    )
-
-    imgCompressor.compressImage(upload)
-      .then((result) => {
-        uploadThumb = result;
-        const thumbnailName = new Date().getTime();
-        const uploadThumbnail = storageRef.child(`thumbnails/${thumbnailName}`).put(uploadThumb);
-
-        uploadThumbnail.on(
-          'state_changed',
-          (snapshot) => {},
-          (error) => { console.log(error) },
-          () => {
-            uploadThumbnail.snapshot.ref.getDownloadURL()
-              .then((downloadURL) => {
-                if (downloadURL) {
-                  uploadThumb.url = downloadURL;
-                  this.updatePostThumbnail(id, uploadThumb.url, thumbnailName);
-                  return;
-                } else { console.log('Thumbnail not uploaded') }
-              })
-          }
-        )
-      })
-      .catch((err) => { console.log('fail') })
-  }
-
-  getImageRatio(event, id, downloadURL, imageName) {
-    let img = new Image();
-    let _URL = window.URL || window.webkitURL;
-    img.src = _URL.createObjectURL(event.file.originFileObj);
-    img.onload = (data) => {
-      const imgRatio = (data.path[0].width / data.path[0].height).toFixed(4)
-      this.updatePostImage(id, downloadURL, imageName, imgRatio);
-    }
-  }
-
-  updatePostImage(id, uploadURL, imageName, imgRatio) {
-    const postData = {
-      ratio: imgRatio || '',
-      photoURL: uploadURL || '',
-      imageName: imageName || ''
-    }
-    this.getPost(id).set(postData, {merge: true});
-  }
-
-  updatePostThumbnail(id, thumbnailURL, thumbnailName) {
-    const postData = {
-      thumbnailURL: thumbnailURL || '',
-      thumbnailName: thumbnailName || ''
-    }
-    this.getPost(id).set(postData, {merge: true});
-  }
-
-  deleteImage(fileName) {
-    return storage.ref().child(`posts/${fileName}`).delete();
-  }
-
-  deleteThumbnail(fileName) {
-    return storage.ref().child(`thumbnails/${fileName}`).delete();
-  }
-
-  deletePost(id) {
-    return this.getPost(id).delete();
   }
 }

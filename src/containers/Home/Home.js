@@ -12,6 +12,7 @@ class Home extends Component {
     activePosts: null
   }
   unsubscribeActivePosts = undefined;
+  screenEvent;
 
   getActivePosts = () => {
     if (this.unsubscribeActivePosts) {
@@ -31,14 +32,15 @@ class Home extends Component {
 
   calcMediaQueries = () => {
     const gridWidth = this.calcGridWidth();
-    let screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
-    const updatePosts = () => {
-      this.setState({ activePosts: GridLayout.calcGrid(this.state.activePosts) });
-      screenEvent.removeListener(updatePosts);
-      this.calcMediaQueries();
-    }   
-    screenEvent.addListener(updatePosts);
+    this.screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
+    this.screenEvent.addListener(this.updatePosts);
   }
+
+  updatePosts = () => {
+    this.setState({ activePosts: GridLayout.calcGrid(this.state.activePosts) });
+    this.screenEvent.removeListener(this.updatePosts);
+    this.calcMediaQueries();
+  }   
 
   componentDidMount() {
     this.getActivePosts();
@@ -46,6 +48,9 @@ class Home extends Component {
   }
 
   componentWillUnmount() {
+    if (this.screenEvent) {
+      this.screenEvent.removeListener(this.updatePosts);
+    }
     if (this.unsubscribeActivePosts) {
       this.unsubscribeActivePosts();
     }

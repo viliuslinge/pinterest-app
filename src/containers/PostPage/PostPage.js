@@ -19,6 +19,7 @@ class PostPage extends Component {
 
   unsubscribeUser;
   unsubscribeActivePosts;
+  screenEvent;
   
   returnPreviousPage = () => {
     this.props.history.push('/home');
@@ -67,14 +68,15 @@ class PostPage extends Component {
 
   calcMediaQueries = () => {
     const gridWidth = this.calcGridWidth();
-    let screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
-    const updatePosts = () => {
-      this.setState({ activePosts: GridLayout.calcGrid(this.state.activePosts) });
-      screenEvent.removeListener(updatePosts);
-      this.calcMediaQueries();
-    }   
-    screenEvent.addListener(updatePosts);
+    this.screenEvent = window.matchMedia(`(min-width: ${gridWidth}px) and (max-width: ${gridWidth + 275}px)`);
+    this.screenEvent.addListener(this.updatePosts);
   }
+
+  updatePosts = () => {
+    this.setState({ activePosts: GridLayout.calcGrid(this.state.activePosts) });
+    this.screenEvent.removeListener(this.updatePosts);
+    this.calcMediaQueries();
+  } 
 
   getRelatedPosts = () => {
     functions.httpsCallable('getRelatedPosts')(this.state.currentPost.tags)
@@ -90,9 +92,13 @@ class PostPage extends Component {
 
   componentDidMount() {
     this.getCurrentPost();
+    this.calcMediaQueries()
   }
 
   componentWillUnmount() {
+    if (this.screenEvent) {
+      this.screenEvent.removeListener(this.updatePosts);
+    }
     if (this.unsubscribeActivePosts) {
       this.unsubscribeActivePosts();
     }

@@ -15,16 +15,32 @@ class PostEdit extends Component {
     tagValidation: ''
   }
 
-  tags = [
-    <Option key={'Art'}>Art</Option>,
-    <Option key={'Science'}>Science</Option>
-  ];
+  tags = [];
 
   handleTagChange = (value) => {
     if (this.state.tagValidation) {
       this.setState({ tagValidation: '' })
     }
-    this.setState({ selectedTagsArr: value });
+    let tagsArr = [];
+      for (let tag of value) {
+        tag = tag.replace(/\s/g, '');
+        tag = tag.charAt(0).toUpperCase() + tag.slice(1);
+        tagsArr.push(tag);
+      };
+    this.setState({ selectedTagsArr: tagsArr });
+  }
+
+  getTagList = () => {
+    firebaseService.getTagList().get().then(data => {
+      const currentTagsArr = data.data().tags
+      for (let tag of currentTagsArr) {
+        this.tags.push(<Option key={tag}>{tag}</Option>);
+      }
+    })
+  }
+
+  updateTagList = () => {
+    firebaseService.updateTagList(this.state.selectedTagsArr);
   }
 
   handleInputChange = (event) => {
@@ -40,6 +56,7 @@ class PostEdit extends Component {
         description: this.state.description,
         tags: this.state.selectedTagsArr
       });
+    this.updateTagList();
     this.props.closeModal();
     message.success('Your post has been updated!');
   }
@@ -61,6 +78,10 @@ class PostEdit extends Component {
       description: props.post.description,
       selectedTagsArr: props.post.tags
     } : null;
+  }
+
+  componentDidMount() {
+    this.getTagList();
   }
   
   render() {

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { message, Upload, Button, Icon, Tabs, Input, Select } from 'antd';
 import { FirebaseService } from '../../api/FirebaseService';
+import { ImgCompressor } from '../../api/ImgCompressor';
 import styles from './CreatePost.scss';
 
 const firebaseService = new FirebaseService();
+const imgCompressor = new ImgCompressor();
 const TabPane = Tabs.TabPane;
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -11,52 +13,16 @@ const Option = Select.Option;
 class Post extends Component {
 
   state = {
-    postId: null,
-    postData: null,
-    thumbnailURL: null,
-    postDescription: '',
-    activeTabKey: '1',
     loading: false,
+    activeTabKey: '1',
+    thumbnailURL: null,
+    imageFile: null,
+    postDescription: '',
     tagValidation: ''
   }
 
-  unsubscribe = undefined;
-  tags = [
-    <Option key={'Art'}>Art</Option>,
-    <Option key={'Science'}>Science</Option>
-  ];
+  tags = [];
   selectedTagsArr = [];
-
-  createNewPost = () => {
-    firebaseService.createPost(this.props.uid)
-      .then((data) => {
-        this.setState({ postId: data.id })
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-  uploadImage = (event) => {
-    if (this.state.postData && this.state.postData.imageName) {
-      this.deleteImage();
-      this.setState({ loading: true });
-    }
-    firebaseService.uploadPostImage(event, this.state.postId)
-    this.unsubscribe = firebaseService.getPost(this.state.postId)
-      .onSnapshot((data) => {
-        if (data.exists) {
-          this.setState({
-            postData: data.data(),
-            thumbnailURL: data.data().thumbnailURL
-          })
-        } else {
-          console.log("No such document!")
-        }}, (error) => {
-          console.log(error);
-        }
-      )
-  }
 
   handleNextStep = () => {
     this.setState({ activeTabKey: String(+this.state.activeTabKey + 1) })
@@ -66,61 +32,89 @@ class Post extends Component {
     this.setState({ activeTabKey: String(+this.state.activeTabKey - 1) })
   }
 
-  handleInputChange = (event) => {
-    this.setState({ postDescription: event.target.value });
+  handleLoading = () => {
+    this.setState({ loading: !this.state.loading });
   }
 
-  handleImageUpload = (info) => {
+  createNewPost = () => {
+    if (this.selectedTagsArr.length === 0) {
+      return this.setState({ tagValidation: 'Please add at least one tag' });
+    }
+    this.handleLoading();
+    const postDetails = {
+      description: this.state.postDescription,
+      tags: this.selectedTagsArr,
+      status: 'active'
+    }
+    firebaseService.createPost(this.props.uid, postDetails, this.state.imageFile)
+      .then((data) => {
+        this.handleLoading();
+        this.props.closeModal();
+        this.updateTagList();
+        message.success('Your post has been shared!');
+      })
+      .catch((error) => {
+        console.error(error);
+        message.error('Oops..something went wrogn. Try again!');
+      });
+  }
+
+  handleImageUpload = (event) => {
     const validator = /image\/[.]*/;
-    if (validator.test(info.file.type) && info.file.status === 'error') {
-      this.setState({ loading: true });
-      this.uploadImage(info)
+    if (validator.test(event.file.type) && event.file.status === 'error') {
+      let _URL = window.URL || window.webkitURL;
+      imgCompressor.compressImage(event.file.originFileObj)
+        .then((result) => {
+          this.setState({
+            imageFile: event,
+            thumbnailURL: _URL.createObjectURL(result)
+          })
+        })
       return;
-    } else if (!validator.test(info.file.type) && info.file.status === 'error') {
+    } else if (!validator.test(event.file.type) && event.file.status === 'error') {
       message.warning('Oops, file type should be image!');
     }
   }
 
-  handleTagChange = (value) => {
-    if (this.state.tagValidation) {
-      this.setState({ tagValidation: '' })
-    }
-    this.selectedTagsArr = value
+  handleInputChange = (event) => {
+    this.setState({ postDescription: event.target.value });
   }
 
-  updateNewPost = () => {
-    if (this.selectedTagsArr.length === 0) {
-      return this.setState({ tagValidation: 'Please add at least one tag' });
-    }
-    firebaseService.getPost(this.state.postId)
-      .update({
-        postId: this.state.postId,
-        description: this.state.postDescription,
-        tags: this.selectedTagsArr,
-        status: 'active'
-      });
-    this.props.closeModal();
-    message.success('Your post has been shared!');
+  handleTagChange = (value) => {
+    if (this.state.tagValidation) {
+      this.setState({ tagValidation: '' });
+    };
+    let tagsArr = [];
+      for (let tag of value) {
+        tag = tag.replace(/\s/g, '');
+        tag = tag.charAt(0).toUpperCase() + tag.slice(1);
+        tagsArr.push(tag);
+      };
+    this.selectedTagsArr = tagsArr;
+  }
+
+  getTagList = () => {
+    firebaseService.getTagList().get().then(data => {
+      const currentTagsArr = data.data().tags
+      for (let tag of currentTagsArr) {
+        this.tags.push(<Option key={tag}>{tag}</Option>);
+      }
+    })
+  }
+
+  updateTagList = () => {
+    firebaseService.updateTagList(this.selectedTagsArr);
   }
 
   deleteImage = () => {
-    this.setState({ loading: false });
-
-    firebaseService.deleteImage(this.state.postData.imageName)
-      .then(firebaseService.updatePostImage(this.state.postId))
-
-    firebaseService.deleteThumbnail(this.state.postData.thumbnailName)
-      .then(firebaseService.updatePostThumbnail(this.state.postId))
+    this.setState({
+      imageFile: null,
+      thumbnailURL: null
+    });
   }
 
   componentDidMount() {
-    this.createNewPost();
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+    this.getTagList();
   }
 
   render() {
@@ -132,7 +126,7 @@ class Post extends Component {
       <div className={styles.imageUpload}>
         <Icon
           className={styles.uploadIcon}
-          type={this.state.loading ? 'loading' : 'plus'} />
+          type='plus' />
         <div className="ant-upload-text">Upload</div>
       </div>
     );
@@ -158,7 +152,6 @@ class Post extends Component {
                   : uploadButton
               }
             </Upload>
-
             {
               this.state.thumbnailURL &&
               <div className={styles.buttonContainer}>
@@ -224,10 +217,11 @@ class Post extends Component {
                 Previous
               </Button>
               <Button
-                type="primary"
                 size="large"
-                onClick={this.updateNewPost}>
-                Share!
+                type="primary"
+                loading={this.state.loading}
+                onClick={this.createNewPost}>
+                { this.state.loading ? 'Loading' : 'Share!' }
               </Button>
             </div>
           </TabPane>
