@@ -38,20 +38,10 @@ class PostPage extends Component {
       })
   }
 
-  // getAllRelatedPosts = () => {
-  //   this.unsubscribeActivePosts = firebaseService
-  //     .subscribeToRelatedPosts(posts => {
-  //       this.setState({ activePosts: GridLayout.calcGrid(posts) })
-  //     },
-  //     this.state.currentPost.tags
-  //   )
-  // }
-
   getPostUser = () => {
     this.unsubscribeUser = firebaseService.getProfile(this.state.currentPost.user_uid)
       .onSnapshot(doc => {
         this.setState({ user: doc.data() }, () => {
-          // this.getAllRelatedPosts();
           this.getRelatedPosts()
         });
       });
@@ -84,6 +74,9 @@ class PostPage extends Component {
         const resultArr = JSON.parse(result.data).hits.hits;
         let relatedPostsArr = [];
         for (let result of resultArr) {
+          if (result._id === this.props.match.params.id) {
+            continue;
+          }
           relatedPostsArr.push(result._source);
         };
         this.setState({ activePosts: GridLayout.calcGrid(relatedPostsArr) })
