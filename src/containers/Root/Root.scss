@@ -1,0 +1,11 @@
+@import '../../theme.scss';
+
+.container {
+  padding-top: 65px;
+}
+
+@media screen and (max-width: $media-small) {
+  .container {
+    padding-top: 100px;
+  }
+}

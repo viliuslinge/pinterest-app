@@ -3,10 +3,12 @@ import Signup from '../../components/Signup/Signup';
 import Login from '../../components/Login/Login';
 import Landing from '../Landing/Landing';
 import Home from '../Home/Home';
+import Search from '../Search/Search';
 import Settings from '../Settings/Settings';
 import PostPage from '../PostPage/PostPage';
 import Navbar from '../../ui/Navbar/Navbar';
 import Profile from '../Profile/Profile';
+import styles from './Root.scss';
 import { FirebaseService } from '../../api/FirebaseService';
 import { auth } from '../../firebase';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -78,33 +80,39 @@ class Root extends Component {
           <Route render={
             (props) => <Navbar {...props} user={this.state.user} />
           }/>
-          <Switch>
-            <Route exact path="/" component={Landing} />
-            <NoAuthRoute
-              user={this.state.user}
-              path="/signup"
-              component={Signup} />
-            <NoAuthRoute
-              user={this.state.user}
-              path="/login"
-              component={Login} />
-            <PrivateRoute
-              user={this.state.user}
-              path="/home"
-              component={Home} />
-            <PrivateRoute
-              user={this.state.user}
-              path="/profile/:id"
-              component={Profile} />
-            <PrivateRoute
-              user={this.state.user}
-              path="/Settings"
-              component={Settings} />
-            <PrivateRoute
-              user={this.state.user}
-              path="/post/:id"
-              component={PostPage} />
-          </Switch>
+          <div className={styles.container}>
+            <Switch >
+              <Route exact path="/" component={Landing} />
+              <NoAuthRoute
+                user={this.state.user}
+                path="/signup"
+                component={Signup} />
+              <NoAuthRoute
+                user={this.state.user}
+                path="/login"
+                component={Login} />
+              <PrivateRoute
+                user={this.state.user}
+                path="/home"
+                component={Home} />
+              <PrivateRoute
+                user={this.state.user}
+                path="/search/:query"
+                component={Search} />
+              <PrivateRoute
+                user={this.state.user}
+                path="/profile/:id"
+                component={Profile} />
+              <PrivateRoute
+                user={this.state.user}
+                path="/Settings"
+                component={Settings} />
+              <PrivateRoute
+                user={this.state.user}
+                path="/post/:id"
+                component={PostPage} />
+            </Switch>
+          </div>
         </div>
       </Router>
     );

@@ -1,12 +1,11 @@
 @import '../../theme.scss';
 
 .container {
-  margin: 30px 0;
+  margin: 60px 0 30px 0;
 }
 .profileContainer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   max-width: 600px;
   margin: auto;
 }
@@ -16,6 +15,11 @@
 .menuContainer {
   max-width: 600px;
   margin: 20px auto 20px auto;
+}
+.infoContainer {
+  width: calc(100% - 200px);
+  color: $col-grey-2;
+  font-size: 0.8rem;
 }
 .profilePic {
   border-radius: 50%;
@@ -28,15 +32,42 @@
   border: 6px solid $col-grey-1;
 }
 .name {
+  color: $col-black;
   font-weight: 700;
   font-size: 2.5rem;
+  line-height: 2.7rem;
   margin: 0;
-}
-.about {
-  color: $col-grey-2;
-  font-size: 0.8rem;
-  max-width: 350px
 }
 .addNewPost {
   background-color: pink;
+}
+
+@media screen and (max-width: $media-small) {
+  .container {
+    margin: 30px 0;
+  }
+  .createPostButton {
+    display: none;
+  }
+  .profileContainer {
+    display: flex;
+    flex-direction: column;
+    margin: auto 20px;
+  }
+  .profilePic {
+    margin: 0 auto;
+  }
+  .infoContainer {
+    order: 1;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .name {
+    font-size: 1.7rem;
+    line-height: 1.8rem;
+    text-align: center;
+  }
+  .email {
+    text-align: center;
+  }
 }

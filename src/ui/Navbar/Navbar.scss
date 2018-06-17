@@ -4,11 +4,14 @@
   padding: 15px 30px;
   height: 65px;
   display: flex;
+  position: fixed;
+  top: 0;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   border-bottom: 1px solid $col-grey-1;
   background-color: $col-white;
+  z-index: 1;
 }
 .logo {
   height: 25px;
@@ -23,4 +26,22 @@
 }
 .user {
   margin: 0 20px 0 0;
+}
+.search {
+  display: flex;
+  width: 100%;
+  margin: 0 20px;
+}
+
+@media screen and (max-width: $media-small) {
+  .navbar {
+    padding: 15px 20px 50px 20px;
+    height: inherit;
+  }
+  .search {
+    position: absolute;
+    top: 55px;
+    left: 0;
+    width: calc(100% - 40px);
+  }
 }

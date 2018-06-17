@@ -106,12 +106,12 @@ class Profile extends Component {
         {
           this.state.user &&
           <div className={styles.profileContainer}>
-            <div>
+            <div className={styles.infoContainer}>
               <h1 className={styles.name}>
                 {this.state.user.name} {this.state.user.surname}
               </h1>
-              <p>{this.state.user.email}</p>
-              <p className={styles.about}>{this.state.user.about}</p>
+              <p className={styles.email}>{this.state.user.email}</p>
+              <p>{this.state.user.about}</p>
             </div>
             <div className={styles.profilePic} style={imageStyle}></div>
           </div>
@@ -122,7 +122,10 @@ class Profile extends Component {
           style={{ width: `${this.calcGridWidth()}px` }}>
           {
             this.state.user && this.state.user.uid === this.props.user.uid &&
-            <div onClick={this.openPostModal} style={{ width: `${GridLayout.columnWidth}px` }}>
+            <div
+              onClick={this.openPostModal}
+              className={styles.createPostButton}
+              style={{ width: `${GridLayout.columnWidth}px` }}>
               <CreatePostButton />
             </div>
           }
