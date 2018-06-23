@@ -35,13 +35,16 @@
 
 @media screen and (max-width: $media-small) {
   .navbar {
-    padding: 15px 20px 50px 20px;
+    padding: 15px 20px;
     height: inherit;
+    flex-wrap: wrap;
   }
   .search {
-    position: absolute;
-    top: 55px;
-    left: 0;
-    width: calc(100% - 40px);
+    order: 1;
+    margin: 10px 0 0 0;
+  }
+  .modal {
+    top: auto;
+    padding-bottom: 0;
   }
 }

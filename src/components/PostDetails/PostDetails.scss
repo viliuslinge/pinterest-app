@@ -7,7 +7,6 @@
   max-width: 1000px;
   padding: 25px;
   border-radius: 10px;
-  margin-top: -40px;
 }
 .detailsContainer {
   width: 280px;
@@ -56,4 +55,31 @@
   font-size: 0.8rem;
   color: $col-link;
   margin: 0 10px 0 0;
+}
+
+@media screen and (max-width: $media-postPage) {
+  .container {
+    max-width: calc(100% - 40px);
+  }
+}
+
+@media screen and (max-width: $media-small) {
+  .container {
+    flex-direction: column;
+    padding: 15px;
+  }
+  .detailsContainer {
+    width: 100%;
+    padding-left: 0;
+  }
+  .imageVisible {
+    width: 100%;
+  }
+  .userContainer {
+    margin: 10px 0;
+  }
+  .description {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
 }

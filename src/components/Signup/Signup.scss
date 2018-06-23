@@ -38,3 +38,9 @@
 .signupError {
   color: $col-danger;
 }
+
+@media screen and (max-width: $media-small) {
+  .container {
+    margin-top: -37px;
+  }
+}

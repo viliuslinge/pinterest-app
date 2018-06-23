@@ -9,6 +9,11 @@
   font-size: 1.2rem;
   font-weight: 700;
 }
+.loading {
+  width: 100%;
+  text-align: center;
+  margin-top: 80px;
+}
 
 @media screen and (max-width: $media-small) {
   .title {

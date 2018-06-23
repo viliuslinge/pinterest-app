@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './PostPage.scss';
 import PostDetails from '../../components/PostDetails/PostDetails';
 import { FirebaseService } from '../../api/FirebaseService';
-import { Button, Icon } from 'antd';
+import { Button, Icon, Spin } from 'antd';
 import Post from '../../components/Post/Post';
 import GridLayout from '../../utils/grid-layout';
 import { functions } from '../../firebase';
@@ -14,15 +14,24 @@ class PostPage extends Component {
   state = {
     currentPost: null,
     user: null,
-    activePosts: null
+    activePosts: null,
+    zoomOut: false
   }
 
   unsubscribeUser;
   unsubscribeActivePosts;
   screenEvent;
+
+  showZoomOut = (event) => {
+    if (event.target.parentNode.id === 'container') {
+      this.setState({ zoomOut: !this.state.zoomOut })
+    }
+  }
   
-  returnPreviousPage = () => {
-    this.props.history.push('/home');
+  returnPreviousPage = (event) => {
+    if (event.target.id === 'homeBtn' || this.state.zoomOut) {
+      this.props.history.push('/home');
+    }
   }
 
   getCurrentPost = () => {
@@ -113,24 +122,48 @@ class PostPage extends Component {
   };
 
   render() {
+    const cursorStyle = {
+      cursor: this.state.zoomOut ? 'zoom-out' : 'default'
+    }
+
     return (
-      <div className={styles.container}>
+      <div
+        id="container"
+        style={cursorStyle}
+        className={styles.container}
+        onMouseOver={this.showZoomOut}
+        onMouseOut={this.showZoomOut}
+        onClick={this.returnPreviousPage}>
+        {
+          this.state.currentPost && this.state.user &&
+          <Button
+            onClick={this.returnPreviousPage}
+            className={styles.backButton}>
+            <Icon type="left" />Home
+          </Button>
+        }
         <div className={styles.currentPostContainer}>
           {
             this.state.currentPost && this.state.user &&
-            <div>
-              <Button size="large" onClick={this.returnPreviousPage} className={styles.backButton}>
-                <Icon type="left" />Back
-              </Button>
-              <PostDetails
-                user={this.state.user}
-                post={this.state.currentPost}
-                handleRedirect={this.redirectToUserProfile} />
-            </div>
+            <PostDetails
+              user={this.state.user}
+              post={this.state.currentPost}
+              handleRedirect={this.redirectToUserProfile} />
           }
         </div>
 
         <div className={styles.postsBackground}>
+          {
+            !this.state.activePosts &&
+            <div className={styles.loading}>
+              <Spin size="large"/>
+            </div>
+          }
+          {
+            this.state.activePosts &&
+            this.state.activePosts.length === 0 &&
+            <p className={styles.title}>No related images</p>
+          }
           {
             this.state.currentPost && 
             this.state.activePosts &&

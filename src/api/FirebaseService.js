@@ -140,7 +140,11 @@ export class FirebaseService {
     let _URL = window.URL || window.webkitURL;
     img.src = _URL.createObjectURL(upload);
     img.onload = (data) => {
-      post.ratio = (data.path[0].width / data.path[0].height).toFixed(4);
+      if (data.path) {
+        post.ratio = (data.path[0].width / data.path[0].height).toFixed(4);
+      } else if (data.target) {
+        post.ratio = (data.target.width / data.target.height).toFixed(4);
+      }
       this.uploadImage(post, upload, resolve);
     }
   }
@@ -172,13 +176,13 @@ export class FirebaseService {
           () => { uploadThumbnail.snapshot.ref.getDownloadURL()
             .then(downloadURL => {
               post.thumbnailURL = downloadURL;
-              resolve(this.sendPostToFirebase(post))
+              resolve(this.sendPostToFirebase(post));
             })
             .catch(err => console.log(err));
           }
         )
       })
-      .catch((err) => { console.log('fail') })
+      .catch((err) => { console.log('fail') });
   }
 
   sendPostToFirebase(post) {
@@ -225,6 +229,22 @@ export class FirebaseService {
       }
     );
   }
+
+  // getAllActivePosts(callbackFunction, lastQueryElement) {
+  //   let query = db.collection('posts')
+  //     .where('status', '==', 'active')
+  //     .orderBy('created_at', 'desc')
+  //     .limit(20)
+  //   if (lastQueryElement) { query = query.limit(5).startAfter(lastQueryElement) }
+  //   return query
+  //     .get().then(snapshot => {
+  //       let lastVisible = snapshot.docs[snapshot.docs.length-1];
+  //       const allPosts = []
+  //       snapshot.forEach(doc => allPosts.push(this.createPostFromDoc(doc)))
+  //       callbackFunction(allPosts, lastVisible);
+  //     }
+  //   )
+  // }
 
   subscribeToUserActivePosts(callbackFunction, user_uid) {
     return db.collection('posts')

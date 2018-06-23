@@ -62,13 +62,14 @@ class Post extends Component {
   handleImageUpload = (event) => {
     const validator = /image\/[.]*/;
     if (validator.test(event.file.type) && event.file.status === 'error') {
+      this.handleLoading();
       let _URL = window.URL || window.webkitURL;
       imgCompressor.compressImage(event.file.originFileObj)
         .then((result) => {
           this.setState({
             imageFile: event,
             thumbnailURL: _URL.createObjectURL(result)
-          })
+          }, () => this.handleLoading())
         })
       return;
     } else if (!validator.test(event.file.type) && event.file.status === 'error') {
@@ -126,14 +127,14 @@ class Post extends Component {
       <div className={styles.imageUpload}>
         <Icon
           className={styles.uploadIcon}
-          type='plus' />
+          type={this.state.loading ? 'loading' : 'plus'} />
         <div className="ant-upload-text">Upload</div>
       </div>
     );
 
     return (
       <div className={styles.postContainer}>
-        <Tabs activeKey={this.state.activeTabKey}>
+        <Tabs activeKey={this.state.activeTabKey} size="small" tabBarStyle={{ display: 'none' }}>
           <TabPane tab="1.Upload" key="1" disabled>
             <p className={styles.hint}>
               Click below and upload any picture you want!
@@ -141,7 +142,7 @@ class Post extends Component {
             <Upload
               name="avatar"
               listType="picture-card"
-              className="avatar-uploader"
+              className={styles['avatar-uploader']}
               showUploadList={false}
               action=""
               accept="image/*"

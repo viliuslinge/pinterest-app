@@ -12,10 +12,22 @@
   align-items: center;
 }
 .title {
-  font-size: 4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: $col-white;
+  margin: 0;
 }
 .button {
-  margin: 0 5px;
+  margin: 15px 5px;
+}
+.logo {
+  width: 70%;
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: $media-small) {
+  .container {
+    margin-top: -37px;
+  }
 }

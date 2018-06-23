@@ -1,3 +1,5 @@
+@import '../../theme.scss';
+
 .itemContainer {
   display: flex;
   justify-content: center;
@@ -5,7 +7,7 @@
   position: absolute;
 }
 .item {
-  border: 0 solid #f1f1f1;
+  border: 0 solid $col-grey-0;
   height: calc(100% - 20px);
   width: calc(100% - 20px);
   border-radius: 1px;
@@ -13,8 +15,8 @@
   &:hover {
     transition: 0.2s ease-in-out;
     transition: box-shadow 0.1s ease-in-out;
-    background-color: #f1f1f1;
-    box-shadow: 0 0 0 10px #f1f1f1;
+    background-color: $col-grey-0;
+    box-shadow: 0 0 0 10px $col-grey-0;
     .image::before {
       content: "";
       width: 100%;
@@ -34,14 +36,14 @@
   background-size: cover;
   background-position: center;
   border-radius: 6px;
-  background-color: #efefef;
+  background-color: $col-grey-0;
   position: relative;
 }
 .detailsContainer {
   font-size: 0.9rem;
   font-weight: 700;
   padding: 5px;
-  color: grey;
+  color: $col-grey-2;
 }
 .infoContainer {
   display: flex;

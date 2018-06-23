@@ -38,8 +38,10 @@
   line-height: 2.7rem;
   margin: 0;
 }
-.addNewPost {
-  background-color: pink;
+.loading {
+  width: 100%;
+  text-align: center;
+  margin-top: 80px;
 }
 
 @media screen and (max-width: $media-small) {

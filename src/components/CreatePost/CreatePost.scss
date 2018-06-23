@@ -14,7 +14,6 @@
   margin: 0;
   padding: 0;
 }
-
 .imageUploaded  {
   width: 330px;
   height: 330px;
@@ -45,4 +44,18 @@
   font-size: 0.75rem;
   margin: 3px 0;
   color: $col-danger;
+}
+
+@media screen and (max-width: $media-small) {
+  .postContainer {
+    width: 100%;
+  }
+  .imageUpload {
+    width: calc(100vw - 90px);
+    height: calc(100vw - 90px);
+  }
+  .imageUploaded  {
+    width: calc(100vw - 90px);
+    height: calc(100vw - 90px);
+  }
 }

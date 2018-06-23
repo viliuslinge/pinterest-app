@@ -65,7 +65,7 @@ class Root extends Component {
     })
 
     window.onbeforeunload = (e) => {
-      this.setLocalStorage()
+      this.setLocalStorage();
     }
   }
 
@@ -79,10 +79,14 @@ class Root extends Component {
         <div>
           <Route render={
             (props) => <Navbar {...props} user={this.state.user} />
-          }/>
+          } />
           <div className={styles.container}>
-            <Switch >
-              <Route exact path="/" component={Landing} />
+            <Switch>
+              <NoAuthRoute
+                exact
+                user={this.state.user}
+                path="/"
+                component={Landing} />
               <NoAuthRoute
                 user={this.state.user}
                 path="/signup"

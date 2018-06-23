@@ -4,7 +4,7 @@ import styles from './Profile.scss';
 import Post from '../../components/Post/Post';
 import CreatePost from '../../components/CreatePost/CreatePost';
 import { CreatePostButton } from '../../components/CreatePostButton/CreatePostButton';
-import { Modal, Divider } from 'antd';
+import { Modal, Divider, Spin } from 'antd';
 import GridLayout from '../../utils/grid-layout';
 
 const firebaseService = new FirebaseService();
@@ -127,6 +127,12 @@ class Profile extends Component {
               className={styles.createPostButton}
               style={{ width: `${GridLayout.columnWidth}px` }}>
               <CreatePostButton />
+            </div>
+          }
+          {
+            !this.state.userActivePosts &&
+            <div className={styles.loading}>
+              <Spin size="large"/>
             </div>
           }
           {

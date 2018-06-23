@@ -4,6 +4,7 @@ import GridLayout from '../../utils/grid-layout';
 import styles from './Search.scss';
 import Post from '../../components/Post/Post';
 import { FirebaseService } from '../../api/FirebaseService';
+import { Spin } from 'antd';
 
 const firebaseService = new FirebaseService();
 
@@ -98,6 +99,12 @@ class Search extends Component {
         className={styles.postsContainer}
         style={{ width: `${this.calcGridWidth()}px` }}>
         <p className={styles.title}>{this.state.searchMessage}</p>
+        {
+          !this.state.activePosts &&
+          <div className={styles.loading}>
+            <Spin size="large"/>
+          </div>
+        }
         {
           this.state.activePosts &&
           this.state.activePosts.map(post => {

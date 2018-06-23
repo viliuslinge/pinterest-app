@@ -17,6 +17,7 @@
   background-repeat: no-repeat;
   background-color: $col-grey-1;
   margin-bottom: 20px;
+  border: 6px solid $col-grey-1;
 }
 .inputContainer {
   width: 100%;
@@ -41,4 +42,32 @@
 }
 .label {
   font-weight: 600;
+}
+
+@media screen and (max-width: $media-small) {
+  .container {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .settingsContainer {
+    flex-direction: column;
+  }
+  .pictureContainer {
+    margin-right: 0; 
+    margin-bottom: 20px;
+  }
+  .profilePic {
+    height: 150px;
+    width: 150px;
+  }
+  .saveButton {
+    float: inherit;
+    margin: 0 auto;
+  }
+  .title {
+    font-weight: 700;
+    margin: 0;
+  }
 }

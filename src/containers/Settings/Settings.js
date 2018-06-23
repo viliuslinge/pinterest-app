@@ -15,8 +15,6 @@ class Settings extends Component {
     hasProfilePicChanged: false
   }
 
-  
-
   handleChange = event => {
     const content = event.target.value;
     const name = event.target.name;
@@ -56,7 +54,7 @@ class Settings extends Component {
 
     return (
       <div className={styles.container}>
-        <h1 className={styles.title}>Profile</h1>
+        <h1 className={styles.title}>Settings</h1>
 
         <div className={styles.settingsContainer}>
           <div className={styles.pictureContainer}>
