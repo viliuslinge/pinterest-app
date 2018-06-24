@@ -159,6 +159,7 @@ class Profile extends Component {
           visible={this.state.postModalVisible}
           footer={null}
           width={420}
+          className={styles.modal}
           onCancel={this.closePostModal}>
           {
             this.state.postModalVisible &&

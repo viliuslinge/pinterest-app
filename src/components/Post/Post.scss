@@ -25,9 +25,6 @@
       position: absolute;
       border-radius: 6px;
     }
-    .editButton {
-      display: block;
-    }
   }
 }
 .image {
@@ -76,7 +73,4 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.editButton {
-  display: none;
 }

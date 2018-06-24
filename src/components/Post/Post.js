@@ -82,7 +82,6 @@ class Post extends Component {
                 <Button
                   id="edit-button"
                   icon="edit"
-                  type="primary"
                   className={styles.editButton}
                   onClick={this.openPostModal} />
               }

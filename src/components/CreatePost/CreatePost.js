@@ -25,6 +25,9 @@ class Post extends Component {
   selectedTagsArr = [];
 
   handleNextStep = () => {
+    if (this.state.loading) {
+      this.setLoadingOff()
+    };
     this.setState({ activeTabKey: String(+this.state.activeTabKey + 1) })
   }
 
@@ -32,15 +35,19 @@ class Post extends Component {
     this.setState({ activeTabKey: String(+this.state.activeTabKey - 1) })
   }
 
-  handleLoading = () => {
-    this.setState({ loading: !this.state.loading });
+  setLoadingOn = () => {
+    this.setState({ loading: true });
+  }
+
+  setLoadingOff = () => {
+    this.setState({ loading: false });
   }
 
   createNewPost = () => {
     if (this.selectedTagsArr.length === 0) {
       return this.setState({ tagValidation: 'Please add at least one tag' });
     }
-    this.handleLoading();
+    this.setLoadingOn();
     const postDetails = {
       description: this.state.postDescription,
       tags: this.selectedTagsArr,
@@ -48,7 +55,7 @@ class Post extends Component {
     }
     firebaseService.createPost(this.props.uid, postDetails, this.state.imageFile)
       .then((data) => {
-        this.handleLoading();
+        this.setLoadingOff();
         this.props.closeModal();
         this.updateTagList();
         message.success('Your post has been shared!');
@@ -61,18 +68,28 @@ class Post extends Component {
 
   handleImageUpload = (event) => {
     const validator = /image\/[.]*/;
-    if (validator.test(event.file.type) && event.file.status === 'error') {
-      this.handleLoading();
-      let _URL = window.URL || window.webkitURL;
-      imgCompressor.compressImage(event.file.originFileObj)
-        .then((result) => {
-          this.setState({
-            imageFile: event,
-            thumbnailURL: _URL.createObjectURL(result)
-          }, () => this.handleLoading())
-        })
-      return;
-    } else if (!validator.test(event.file.type) && event.file.status === 'error') {
+    if (validator.test(event.file.type)) {
+      if (event.file.status === 'uploading') {
+        this.setLoadingOn();
+      }
+      if (event.file.status === 'done') {
+        let _URL = window.URL || window.webkitURL;
+        imgCompressor.compressImage(event.file.originFileObj)
+          .then((result) => {
+            this.setState({
+              imageFile: event,
+              thumbnailURL: _URL.createObjectURL(result)
+            });
+          })
+        return;
+      }
+      if (event.file.status === 'error') {
+        if (this.state.loading) {
+          this.setLoadingOff()
+        };
+        return message.warning('Oops, something went wrong! Try again');
+      }
+    } else if (!validator.test(event.file.type)) {
       message.warning('Oops, file type should be image!');
     }
   }
@@ -108,6 +125,7 @@ class Post extends Component {
   }
 
   deleteImage = () => {
+    this.setLoadingOff();
     this.setState({
       imageFile: null,
       thumbnailURL: null
